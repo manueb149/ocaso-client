@@ -7,23 +7,23 @@ import { useEffect } from 'react'
 interface Props { }
 
 const Protected: NextPage = (props): JSX.Element => {
-    const {data, status} = useSession()
-    
-    useEffect(()=> {
-        if(status === "unauthenticated") 
+    const { data, status } = useSession()
+
+    useEffect(() => {
+        if (status === "unauthenticated")
             Router.replace("/auth/signin")
     }, [status])
-    
-    if(status === "authenticated")
+
+    if (status === "authenticated")
         return (
             <div>
                 All users area!
-            </div> 
+            </div>
         )
 
     return (
         <div>
-           .....loading!
+            .....loading!
         </div>
     )
 }
