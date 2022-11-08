@@ -1,23 +1,49 @@
 {
   "name": "ocaso-client",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prepare": "husky install",
+    "check-types": "tsc --pretty --noEmit",
+    "check-lint": "eslint . --ext ts --ext tsx --ext js",
+    "check-format": "prettier --check .",
+    "format": "prettier --write .",
+    "check-all": "npm run format && npm run check-types && npm run check-lint && npm run check-format && npm run build"
   },
   "dependencies": {
-    "@types/node": "18.11.9",
-    "@types/react": "18.0.24",
-    "@types/react-dom": "18.0.8",
-    "eslint": "8.26.0",
-    "eslint-config-next": "^13.0.2",
+    "@fontsource/public-sans": "^4.5.11",
+    "@fontsource/roboto": "^4.5.8",
+    "@fortawesome/fontawesome-svg-core": "^6.2.0",
+    "@fortawesome/free-brands-svg-icons": "^6.2.0",
+    "@fortawesome/free-regular-svg-icons": "^6.2.0",
+    "@fortawesome/free-solid-svg-icons": "^6.2.0",
+    "@fortawesome/react-fontawesome": "^0.2.0",
+    "antd": "^4.24.1",
+    "bootstrap": "^5",
     "next": "^13.0.2",
     "next-auth": "^4.15.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "typescript": "4.8.4"
+  },
+  "devDependencies": {
+    "@types/node": "18.11.6",
+    "@types/react": "18.0.23",
+    "@types/react-dom": "18.0.7",
+    "@typescript-eslint/eslint-plugin": "^5.0.0",
+    "@typescript-eslint/parser": "^5.0.0",
+    "eslint": "^8.0.1",
+    "eslint-config-google": "^0.14.0",
+    "eslint-config-next": "13.0.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-react": "^7.31.10",
+    "husky": "^8.0.0",
+    "prettier": "^2.7.1",
+    "sass": "^1.55.0",
     "typescript": "4.8.4"
   }
 }

@@ -1,0 +1,17 @@
+.ant-layout-sider {
+  height: 100%;
+  // width: 200px;
+
+  .ant-layout-sider-children {
+    padding-top: 20px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+
+    .ant-menu.ant-menu-inline-collapsed {
+      width: 70px;
+    }
+  }
+}

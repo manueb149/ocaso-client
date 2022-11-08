@@ -1,21 +1,9 @@
+import { NextPage } from 'next';
 
+interface Props {}
 
-import { NextPage } from 'next'
-import { useSession } from 'next-auth/react'
+const Admin: NextPage<Props> = () => {
+  return <div>Admin</div>;
+};
 
-
-interface Props { }
-
-const Admin: NextPage<Props> = (props) => {
-  const { data, status } = useSession()
-
-
-  return (
-    <div>
-      AaaaaDmin
-    </div>
-  )
-}
-
-
-export default Admin
+export default Admin;

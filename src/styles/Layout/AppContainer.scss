@@ -1,0 +1,33 @@
+@import './Main.scss';
+@import './Sidebar.scss';
+
+.app-container {
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+
+  .app-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  main.ant-layout-content {
+    padding: 15px;
+    height: auto;
+    min-height: auto !important;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .site-layout-background {
+    background: #fff;
+  }
+
+  .anticon.anticon-menu-fold,
+  .anticon.anticon-menu-unfold {
+    font-size: 20px;
+    margin-left: 20px;
+  }
+}
