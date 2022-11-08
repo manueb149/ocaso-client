@@ -1,32 +1,20 @@
-import { NextPage } from 'next'
-import { useSession } from 'next-auth/react'
-import Router from 'next/router'
-import { useEffect } from 'react'
+import { NextPage } from 'next';
+import { useSession } from 'next-auth/react';
+import Router from 'next/router';
+import { useEffect } from 'react';
 
+interface Props {}
 
-interface Props { }
+const Protected: NextPage<Props> = (): JSX.Element => {
+  const { status } = useSession();
 
-const Protected: NextPage = (props): JSX.Element => {
-    const { data, status } = useSession()
+  useEffect(() => {
+    if (status === 'unauthenticated') Router.replace('/auth/signin');
+  }, [status]);
 
-    useEffect(() => {
-        if (status === "unauthenticated")
-            Router.replace("/auth/signin")
-    }, [status])
+  if (status === 'authenticated') return <div>All users area!</div>;
 
-    if (status === "authenticated")
-        return (
-            <div>
-                All users area!
-            </div>
-        )
+  return <div>.....loading!</div>;
+};
 
-    return (
-        <div>
-            .....loading!
-        </div>
-    )
-}
-
-
-export default Protected
+export default Protected;

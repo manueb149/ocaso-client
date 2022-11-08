@@ -1,0 +1,50 @@
+.user-box {
+  width: 150px;
+  color: #001529;
+
+  .account {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  h6 {
+    font-weight: bold;
+  }
+
+  .alerts {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+// Medium devices (tablets, 768px and up)
+@media (min-width: 768px) {
+  .user-box {
+    width: 200px;
+  }
+}
+
+// Large devices (desktops, 992px and up)
+@media (min-width: 992px) {
+  .user-box {
+    width: 200px;
+  }
+}
+
+// X-Large devices (large desktops, 1200px and up)
+@media (min-width: 1200px) {
+  .user-box {
+    width: 200px;
+  }
+}
+
+// XX-Large devices (larger desktops, 1400px and up)
+@media (min-width: 1400px) {
+  .user-box {
+    width: 200px;
+  }
+}
