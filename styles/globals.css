@@ -24,3 +24,18 @@ a {
     background: black;
   }
 }
+
+.login_form {
+display: grid; 
+ place-items: center;
+ height: 100vh;
+width: auto;
+}
+.login_form > form{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.8rem;
+  /* max-width: 50%; */
+}
