@@ -7,14 +7,14 @@ import { useSession } from 'next-auth/react'
 interface Props { }
 
 const Admin: NextPage<Props> = (props) => {
-    const {data, status} = useSession()
-    
+  const { data, status } = useSession()
 
-    return (
-        <div>
-          AaaaaDmin
-        </div>
-    )
+
+  return (
+    <div>
+      AaaaaDmin
+    </div>
+  )
 }
 
 

@@ -15,18 +15,18 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
-       {
-        data?.user?(
-          <h1 className={styles.title}>
-          Welcome {data.user.name}
-        </h1>
-        ):(
-          <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-        )
-       }
-    
+        {
+          data?.user ? (
+            <h1 className={styles.title}>
+              Welcome {data.user.name}
+            </h1>
+          ) : (
+            <h1 className={styles.title}>
+              Welcome to <a href="https://nextjs.org">Next.js!</a>
+            </h1>
+          )
+        }
+
         <p className={styles.description}>
           Get started by editing{' '}
           <code className={styles.code}>pages/index.tsx</code>

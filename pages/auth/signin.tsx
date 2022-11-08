@@ -21,7 +21,7 @@ const SignIn: NextPage<Props> = () => {
             redirect: false,
             email: userData.email,
             password: userData.password,
-            
+
         }).then((result: SignInResponse | undefined) => {
             if (result?.error) {
                 setError(result?.error)
