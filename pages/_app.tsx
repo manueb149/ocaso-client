@@ -1,9 +1,27 @@
-import '../styles/globals.css'
-import type { AppProps } from 'next/app'
-import { SessionProvider } from 'next-auth/react'
+import '../src/styles/globals.scss';
+import { CustomAppProps } from '../src/models/types.model';
+import { SessionProvider } from 'next-auth/react';
+import { Session } from 'next-auth';
 
-export default function App({ Component, pageProps }: AppProps) {
-  return <SessionProvider session={pageProps.session}>
-    <Component {...pageProps} />
-  </SessionProvider>
+/**
+ * App wrapper for global management
+ */
+export default function App({
+  Component,
+  pageProps: { session, ...pageProps },
+}: CustomAppProps<{ session: Session }>): JSX.Element {
+  if (Component.layout) {
+    return (
+      <SessionProvider session={session}>
+        <Component.layout>
+          <Component {...pageProps} />
+        </Component.layout>
+      </SessionProvider>
+    );
+  }
+  return (
+    <SessionProvider session={session}>
+      <Component {...pageProps} />
+    </SessionProvider>
+  );
 }

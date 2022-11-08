@@ -1,43 +1,32 @@
 {
   "env": {
     "browser": true,
-    "es2021": true
+    "es2021": true,
+    "node": true
   },
-  "extends": [
-    "plugin:react/recommended",
-    "plugin:import/typescript"
-  ],
-  "parser": "@typescript-eslint/parser",
+  "extends": ["plugin:react/recommended", "google", "next", "prettier"],
+  "overrides": [],
   "parserOptions": {
+    "project": "tsconfig.json",
+    "ecmaVersion": "latest",
+    "sourceType": "module",
     "ecmaFeatures": {
       "jsx": true
-    },
-    "ecmaVersion": "latest",
-    "sourceType": "module"
+    }
   },
   "plugins": ["react", "@typescript-eslint"],
   "rules": {
-    "import/extensions": [
-        "error",
-        "ignorePackages",
-        {
-          "js": "never",
-          "jsx": "never",
-          "ts": "never",
-          "tsx": "never"
-        }
-    ],
-    "react/jsx-filename-extension": [1, { "extensions": [".tsx", ".jsx"] }],
-    "react/function-component-definition": [
-      2,
-      {
-        "namedComponents": ["function-declaration", "arrow-function"],
-        "unnamedComponents": ["function-expression", "arrow-function"]
-      }
-    ],
-    "quotes": ["error", "single", { "allowTemplateLiterals": true }],
-    "no-undef": "off",
-    "react/jsx-no-bind": [ "error", { "allowFunctions" : true, "allowArrowFunctions": true } ],
-    "react/require-default-props": [ 0 ]
+    "valid-jsdoc": "off",
+    "new-cap": "off",
+    "spaced-comment": ["error", "always", { "markers": ["/"] }],
+    "space-before-function-paren": "off",
+    "@typescript-eslint/space-before-function-paren": "off",
+    "@typescript-eslint/triple-slash-reference": "off",
+    "react/react-in-jsx-scope": "off"
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
   }
 }
