@@ -1,6 +1,8 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
+const base_url = process.env.PUBLIC_SERVER_ENDPOINT
+
 export const authOptions: NextAuthOptions = {
     session: {
         strategy: 'jwt'
@@ -17,7 +19,7 @@ export const authOptions: NextAuthOptions = {
 
                 // console.log("payyy", payload)
 
-                const res = await fetch('http://localhost:4000/v1/auth/login',{
+                const res = await fetch(`${base_url}/auth/login`,{
                     method:'POST',
                     body:JSON.stringify({
                         email: payload.email,
