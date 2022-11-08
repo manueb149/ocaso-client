@@ -6,6 +6,8 @@ import { useEffect } from 'react'
 
 interface Props { }
 
+const base_url = process.env.PUBLIC_SERVER_ENDPOINT
+
 const Dashboard: NextPage = (props) => {
     const { data, status } = useSession()
 
@@ -16,7 +18,7 @@ const Dashboard: NextPage = (props) => {
 
     const handleLogOut = () => {
 
-        fetch('http://localhost:4000/v1/auth/logout',
+        fetch(`${base_url}/auth/logout`,
             {
                 method: 'POST',
                 body: JSON.stringify({
