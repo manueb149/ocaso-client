@@ -1,8 +1,8 @@
 import { GetServerSideProps } from 'next';
 import { unstable_getServerSession as getServerSession } from 'next-auth';
 import Head from 'next/head';
-import { authOptions } from './api/auth/[...nextauth]';
-import AppContainer from '../src/Layout/AppContainer/AppContainer';
+import { authOptions } from '../api/auth/[...nextauth]';
+import AppContainer from '../../src/Layout/AppContainer/AppContainer';
 
 interface Props {}
 
@@ -16,7 +16,7 @@ function Solicitudes({}: Props): JSX.Element {
       <Head>
         <title>Plan Ocaso | Solicitudes</title>
       </Head>
-      <div>Gestion de Solicitudes</div>
+      <div>Gestión de Solicitudes</div>
     </>
   );
 }

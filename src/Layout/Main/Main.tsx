@@ -1,4 +1,6 @@
-import { Content } from 'antd/lib/layout/layout';
+import { Layout } from 'antd';
+
+const { Content } = Layout;
 
 interface Props extends React.HTMLAttributes<HTMLElement> {
   children?: React.ReactNode;

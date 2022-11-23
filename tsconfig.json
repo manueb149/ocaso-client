@@ -22,12 +22,6 @@
     "target": "es2018",
     "incremental": true
   },
-  "include": [
-    "process.d.ts",
-    "next-auth.d.ts",
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx"
-  ],
+  "include": ["process.d.ts", "next-auth.d.ts", "next-env.d.ts", "**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"]
 }
