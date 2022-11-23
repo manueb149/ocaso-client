@@ -1,7 +1,7 @@
 import NextAuth, { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 
-const BASE_URL = process.env['PUBLIC_SERVER_ENDPOINT'];
+export const BASE_URL = process.env['PUBLIC_SERVER_ENDPOINT'];
 
 export const authOptions: NextAuthOptions = {
   session: {

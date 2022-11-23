@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import { ILoginForm } from '../../src/models/interfaces.model';
 import { Button, Card, Col, Form, Input, Row, Spin, Typography } from 'antd';
 import { Modules } from '../../src/models/enums.model';
-
+import { Notify } from '../../config/notifications';
 const { Title } = Typography;
 
 import styles from '../../src/styles/Pages/Auth/Signin.module.scss';
@@ -17,29 +17,27 @@ interface Props {}
  * @return {JSX.Element} Solicitudes module JSX
  */
 const SignIn: NextPage<Props> = (): JSX.Element => {
-  // eslint-disable-next-line no-unused-vars
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const [form] = Form.useForm<ILoginForm>();
 
   const onSubmit = (values: ILoginForm) => {
-    const lastTab =
-      (localStorage.getItem('lastTab') as Modules) || Modules.Solicitudes;
+    const lastTab = (localStorage.getItem('lastTab') as Modules) || Modules.Solicitudes;
     setLoading(true);
     signIn('credentials', {
       redirect: false,
       ...values,
     })
       .then((result: SignInResponse | undefined) => {
-        if (result?.error) {
-          console.log(result);
-          setError(result?.error);
-        }
         setLoading(false);
-        router.push(`/${lastTab}`);
+        if (result?.error) {
+          Notify('error', `${result?.error}`);
+        } else {
+          router.push(`/${lastTab}`);
+        }
       })
-      .catch(() => {
+      .catch((error) => {
+        Notify('error', `${error}`);
         setLoading(false);
       });
   };
@@ -56,30 +54,18 @@ const SignIn: NextPage<Props> = (): JSX.Element => {
           }}
         >
           <Col xs={22}>
-            <div
-              className="container"
-              style={{ maxWidth: '408px', margin: 'auto' }}
-            >
+            <div className="container" style={{ maxWidth: '408px', margin: 'auto' }}>
               <Card
                 className={styles['login-form']}
                 title={
-                  <Title
-                    level={2}
-                    className="title"
-                    style={{ textAlign: 'center', color: '#77ade7' }}
-                  >
+                  <Title level={2} className="title" style={{ textAlign: 'center', color: '#77ade7' }}>
                     Iniciar Sesión
                   </Title>
                 }
                 headStyle={{ borderBottom: 0 }}
                 bodyStyle={{ padding: '24px', textAlign: 'center' }}
               >
-                <Form<ILoginForm>
-                  layout="vertical"
-                  form={form}
-                  onFinish={onSubmit}
-                  requiredMark={false}
-                >
+                <Form<ILoginForm> layout="vertical" form={form} onFinish={onSubmit} requiredMark={false}>
                   <Form.Item
                     name="email"
                     label="Usuario"
@@ -94,10 +80,7 @@ const SignIn: NextPage<Props> = (): JSX.Element => {
                     rules={[{ required: true, message: 'Ingrese su clave' }]}
                     style={{ marginBottom: '12px' }}
                   >
-                    <Input.Password
-                      placeholder="escriba su clave aquí"
-                      size="large"
-                    />
+                    <Input.Password placeholder="escriba su clave aquí" size="large" />
                   </Form.Item>
                   <div style={{ height: '12px', color: '#050550' }}></div>
                   <Button

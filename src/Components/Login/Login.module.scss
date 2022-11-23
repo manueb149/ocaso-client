@@ -6,7 +6,11 @@
   left: $outer-padding;
   bottom: $outer-padding;
   right: $outer-padding;
-  background-color: $light-background;
+  background: url('/bg_login.jpg') no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
   border-radius: $outer-border-radius;
   display: flex;
   flex-direction: column;

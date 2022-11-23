@@ -9,7 +9,7 @@ import AppMain from '../Main/Main';
  * Set the layout for the whole App.
  * @return {JSX.Element} App Layout container JSX
  */
-const AppContainer: React.FC<{ children: ReactNode }> = ({ children }) => {
+const AppContainer: React.FC<{ children: ReactNode }> = ({ children }): JSX.Element => {
   return (
     <Layout className="app-container">
       <AppHeader />
