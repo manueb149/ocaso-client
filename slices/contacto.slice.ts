@@ -3,7 +3,8 @@ import { FormInstance } from 'antd';
 import { signOut } from 'next-auth/react';
 import { RootState } from '../config/configureStore';
 import { Notify } from '../config/notifications';
-import { IContactoState } from './models/interfaces';
+import { ContactoQueryResult, IContactoState } from './models/interfaces';
+import qs from 'querystring';
 
 const initialState: IContactoState = {
   contacto: {
@@ -38,6 +39,13 @@ const initialState: IContactoState = {
     },
   },
   saving: false,
+  contactos: {
+    results: [],
+    limit: 0,
+    page: 0,
+    totalPages: 0,
+    totalResults: 0,
+  },
 };
 
 export const guardarContacto = createAsyncThunk(
@@ -81,6 +89,9 @@ const contactoSlice = createSlice({
     setContacto: (state, action: PayloadAction<IContactoState['contacto']>) => {
       state.contacto = { ...state.contacto, ...action.payload };
     },
+    setContactos: (state, action: PayloadAction<ContactoQueryResult>) => {
+      state.contactos = action.payload;
+    },
     setSaving: (state, action: PayloadAction<boolean>) => {
       state.saving = action.payload;
     },
@@ -119,6 +130,41 @@ const contactoSlice = createSlice({
   },
 });
 
-export const { setContacto, clearContacto, setSaving } = contactoSlice.actions;
+type QueryContacto = {
+  limit: number;
+  page: number;
+  sortBy?: string;
+};
+
+export const verContactos = createAsyncThunk(
+  'CONTACTO_REDUCERS/VER_CONTACTOS',
+  async (query: QueryContacto, { dispatch }) => {
+    try {
+      console.log('bbb', `/api/contactos/ver?${qs.stringify(query)}`);
+
+      const res = await fetch(`/api/contactos/ver?${qs.stringify(query)}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        if (res.status === 401) {
+          throw Error('token expired');
+        } else {
+          Notify('warn', `${data?.data?.message}`);
+        }
+      } else {
+        // Notify('success', `Contacto: ${contacto.nombres} ${contacto.apellidos} creado`);
+        dispatch(setContactos(data.contactos as ContactoQueryResult));
+      }
+    } catch (error: any) {
+      console.log('error', error);
+    }
+  }
+);
+
+export const { setContacto, clearContacto, setSaving, setContactos } = contactoSlice.actions;
 
 export default contactoSlice.reducer;
