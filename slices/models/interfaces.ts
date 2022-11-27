@@ -1,6 +1,7 @@
 // import { Dayjs } from 'dayjs';
 import { Dayjs } from 'dayjs';
 import { Modules } from '../../src/models/enums.model';
+import { IContacto } from '../../src/models/interfaces.model';
 
 export interface ILayoutState {
   isSidebarClosed: boolean;
@@ -43,4 +44,13 @@ export interface IContactoState {
     };
   };
   saving: boolean;
+  contactos: ContactoQueryResult;
 }
+
+export type ContactoQueryResult = {
+  results: IContacto[];
+  page: number;
+  limit: number;
+  totalPages: number;
+  totalResults: number;
+};

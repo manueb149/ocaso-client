@@ -8,6 +8,7 @@ import { AppDispatch, RootState } from '../../config/configureStore';
 import { setMainSectionLoading } from '../../slices/layout.slice';
 import { useEffect } from 'react';
 import Loading from '../../src/Components/Loading/Loading';
+import ContactoTable from './contactoTable';
 
 interface Props {}
 
@@ -17,22 +18,26 @@ interface Props {}
  */
 function ContactosVer({}: Props): JSX.Element {
   const { isMainSectionLoading } = useSelector((state: RootState) => state.layout);
+
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
     dispatch(setMainSectionLoading(false));
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (isMainSectionLoading) {
     return <Loading />;
   }
+  // console.log(contactos);
   return (
     <>
       <Head>
         <title>Plan Ocaso | Ver Contactos</title>
       </Head>
       <div>Listado de Contactos</div>
+      <ContactoTable />
     </>
   );
 }
