@@ -13,12 +13,7 @@ const UserBox: React.FC = (): JSX.Element => {
   const { data } = useSession();
 
   const handleLogOut = () => {
-    fetch(`/auth/logout`, {
-      method: 'POST',
-      body: JSON.stringify({
-        refreshToken: data ? data.user?.refreshToken : null,
-      }),
-    }).then(() => signOut());
+    fetch(`/api/auth/logout`).finally(() => signOut());
   };
 
   return (

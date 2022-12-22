@@ -1,7 +1,9 @@
 // import { Dayjs } from 'dayjs';
+import { FilterValue, Key, SorterResult, SortOrder, TablePaginationConfig } from 'antd/es/table/interface';
 import { Dayjs } from 'dayjs';
 import { Modules } from '../../src/models/enums.model';
 import { IContacto } from '../../src/models/interfaces.model';
+import { PaginatedResult } from '../../src/models/types.model';
 
 export interface ILayoutState {
   isSidebarClosed: boolean;
@@ -14,13 +16,15 @@ export interface IContactoState {
     cedula: string;
     rnc?: number;
     nombres: string;
-    apellidos: string;
-    dob: Dayjs | string | null;
-    sexo: string;
+    apellidos?: string;
+    dob?: Dayjs | string | null;
+    sexo?: string;
     eCivil?: string;
     tel?: string;
     cel: string;
     email?: string;
+    empresa?: boolean;
+    referencia?: string;
     direccion: {
       calle: String;
       sector: String;
@@ -44,13 +48,29 @@ export interface IContactoState {
     };
   };
   saving: boolean;
-  contactos: ContactoQueryResult;
+  contactos: PaginatedResult<IContacto>;
+  suggestions: IContacto[];
+  selectedContacto: IContacto | null;
+  selectedIntermediario: IContacto | null;
+  pagination?: TablePaginationConfig;
 }
 
-export type ContactoQueryResult = {
-  results: IContacto[];
-  page: number;
+export interface ITableState {
+  params: ITableParams;
+  loading: boolean;
+}
+export type ContactoQuery = {
   limit: number;
-  totalPages: number;
-  totalResults: number;
+  page: number;
+  sortBy?: string;
 };
+
+export interface ITableParams {
+  pagination?: TablePaginationConfig;
+  sortField?: string;
+  sortOrder?: string;
+  sorter?: SorterResult<IContacto> | SorterResult<IContacto>[];
+  order?: SortOrder;
+  field?: Key | Key[];
+  filters?: Record<string, FilterValue | null>;
+}

@@ -5,25 +5,28 @@ import { authOptions } from '../api/auth/[...nextauth]';
 import AppContainer from '../../src/Layout/AppContainer/AppContainer';
 import { AppDispatch, RootState } from '../../config/configureStore';
 import { useDispatch, useSelector } from 'react-redux';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { setMainSectionLoading } from '../../slices/layout.slice';
 import Loading from '../../src/Components/Loading/Loading';
-import { Button, DatePicker, Form, Select, Tooltip } from 'antd';
-import { SearchOutlined } from '@ant-design/icons';
-const { RangePicker } = DatePicker;
+import { Segmented, Space } from 'antd';
+import Individual from '../../src/Components/Solicitudes/Individual/Individual';
+import Colectivo from '../../src/Components/Solicitudes/Colectivo/Colectivo';
+import { IPlan } from '../../src/models/interfaces.model';
+import { planesGet } from '../api/planes';
 
-interface Props {}
+interface Props {
+  planes: IPlan[];
+}
 
 /**
  * Solicitudes module
  * @return {JSX.Element} Solicitudes module JSX
  */
-function SolicitudesCrear({}: Props): JSX.Element {
+function SolicitudesCrear({ planes }: Props): JSX.Element {
   // State management
+  const [plan, setPlan] = useState<string>('PLAN INDIVIDUAL');
   const { isMainSectionLoading } = useSelector((state: RootState) => state.layout);
   const dispatch = useDispatch<AppDispatch>();
-
-  // Form management
 
   useEffect(() => {
     dispatch(setMainSectionLoading(false));
@@ -38,38 +41,22 @@ function SolicitudesCrear({}: Props): JSX.Element {
       <Head>
         <title>Plan Ocaso | Crear Solicitud</title>
       </Head>
-      <h3 style={{ textAlign: 'center' }}>Creación de Solicitudes</h3>
+      <h3 style={{ textAlign: 'center', padding: '20px' }}>Creación de Solicitud</h3>
       <section id="crear-solicitud" style={{ padding: '10px 0px 0px 10px' }}>
-        <Form
-          labelCol={{ span: 6 }}
-          wrapperCol={{ span: 14 }}
-          layout="vertical"
-          // initialValues={{ size: componentSize }}
-          // onValuesChange={onFormLayoutChange}
-          size="middle"
-        >
-          <Form.Item label="Contratante">
-            <Select>
-              <Select.Option value="demo">Demo</Select.Option>
-              <Select.Option value="012-3456789-0">Juan Perez</Select.Option>
-              <Select.Option value="012-3456789-1">Julia Perdomo Perez</Select.Option>
-            </Select>
-            <Tooltip title="search">
-              <Button shape="circle" icon={<SearchOutlined />} />
-            </Tooltip>
-          </Form.Item>
-
-          <Form.Item label="Plan">
-            <Select>
-              <Select.Option value="ocaso1">Ocaso I</Select.Option>
-              <Select.Option value="ocaso2">Ocaso II</Select.Option>
-            </Select>
-          </Form.Item>
-
-          <Form.Item label="Fecha de inicio y de término">
-            <RangePicker placeholder={['Inicio', 'Término']} />
-          </Form.Item>
-        </Form>
+        <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
+          <Segmented
+            style={{ fontWeight: 'bold' }}
+            block
+            value={plan}
+            onChange={(value) => {
+              setPlan(value as string);
+            }}
+            options={['PLAN INDIVIDUAL', 'PLAN COLECTIVO']}
+            onResize={undefined}
+            onResizeCapture={undefined}
+          />
+          {plan === 'PLAN INDIVIDUAL' ? <Individual planes={planes} /> : <Colectivo />}
+        </Space>
       </section>
     </>
   );
@@ -77,8 +64,9 @@ function SolicitudesCrear({}: Props): JSX.Element {
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const session = await getServerSession(req, res, authOptions);
+  const { response, data, error } = await planesGet(req, res, session);
 
-  if (!session) {
+  if (!session || !response?.ok || error) {
     return {
       redirect: {
         destination: '/auth/signin',
@@ -88,7 +76,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   }
 
   return {
-    props: {},
+    props: { planes: JSON.parse(JSON.stringify(data)) },
   };
 };
 

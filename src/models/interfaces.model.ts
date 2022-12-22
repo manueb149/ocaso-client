@@ -1,3 +1,5 @@
+import { Dayjs } from 'dayjs';
+
 export interface LayoutProps extends React.HTMLAttributes<HTMLElement> {
   children?: React.ReactNode;
 }
@@ -11,37 +13,28 @@ export interface ILoginForm {
 export interface ISolicitud {
   numSolicitud?: number;
   numDocumento?: number;
-  contacto: IContacto;
-  plan: IPlan;
-  intermediario: IResponsable;
+  contratante: IContacto['cedula'];
+  vendedor: IContacto['cedula'];
+  plan: Plan;
   desde: Date;
   hasta: Date;
   vigencia: number;
   inscritos: IDependientes[];
-  totalCobertura: number;
-  cobertura: ICobertura[];
+  totalCobertura?: number;
 }
 
-export interface IPlan {
-  tipo: string;
+export type Plan = {
+  nombre: string;
   valor: number;
   prima: number;
-}
-
-export interface ICobertura {
-  nombre: string;
-  desc: string;
-  status: boolean;
-}
+};
 
 export interface IDependientes {
-  cedula: string;
+  cedula?: string;
   nombre: string;
-  apellidos: string;
-  dob: Date;
+  dob: Date | string | Dayjs;
   sexo: string;
   parentezco: string;
-  prima: number;
 }
 
 export interface IResponsable {
@@ -68,23 +61,31 @@ export interface IContacto {
 }
 
 export interface IDireccion {
-  calle: String;
-  sector: String;
-  zip?: String;
+  calle: string;
+  sector: string;
+  zip?: string;
   municipio: {
-    codigo: String;
-    nombre?: String;
+    codigo: string;
+    nombre?: string;
   };
   provincia: {
-    codigo: String;
-    nombre?: String;
+    codigo: string;
+    nombre?: string;
   };
   region: {
-    codigo: String;
-    nombre?: String;
+    codigo: string;
+    nombre?: string;
   };
   pais: {
-    codigo: String;
-    nombre?: String;
+    codigo: string;
+    nombre?: string;
   };
+}
+
+// PLANES
+export interface IPlan {
+  id: string;
+  nombre: string;
+  valor: number[];
+  prima: number[];
 }

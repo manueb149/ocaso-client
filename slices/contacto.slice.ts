@@ -1,10 +1,15 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { FormInstance } from 'antd';
+import { FormInstance, TablePaginationConfig } from 'antd';
 import { signOut } from 'next-auth/react';
 import { RootState } from '../config/configureStore';
 import { Notify } from '../config/notifications';
-import { ContactoQueryResult, IContactoState } from './models/interfaces';
+import { IContactoState, ITableParams } from './models/interfaces';
 import qs from 'querystring';
+import { IContacto } from '../src/models/interfaces.model';
+import { getContactoParams } from '../utils/getContactoParams';
+import { setTableLoading, setTableParams } from './table.slice';
+import { Dispatch, SetStateAction } from 'react';
+import { PaginatedResult } from '../src/models/types.model';
 
 const initialState: IContactoState = {
   contacto: {
@@ -20,6 +25,7 @@ const initialState: IContactoState = {
     direccion: {
       calle: '',
       sector: '',
+      zip: '',
       municipio: {
         codigo: '',
         nombre: '',
@@ -46,17 +52,53 @@ const initialState: IContactoState = {
     totalPages: 0,
     totalResults: 0,
   },
+  suggestions: [],
+  selectedContacto: null,
+  selectedIntermediario: null,
 };
+
+export const verContactos = createAsyncThunk(
+  'CONTACTO_REDUCERS/VER_CONTACTOS',
+  async (params: ITableParams | undefined, { dispatch }) => {
+    try {
+      dispatch(setTableLoading(true));
+      const res = await fetch(`/api/contactos/ver?${qs.stringify(getContactoParams(params))}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = (await res.json()) as { contactos: PaginatedResult<IContacto> };
+      const pagination = {
+        current: data?.contactos?.page ?? 1,
+        pageSize: data?.contactos?.limit ?? 10,
+        total: data?.contactos?.totalResults ?? 10,
+      };
+      if (!res.ok) {
+        if (res.status === 401) {
+          fetch(`/api/auth/logout`).then(() => signOut());
+        } else {
+          Notify('warn', `Error al cargar los contactos`);
+        }
+      } else {
+        dispatch(setContactos(data.contactos));
+        dispatch(setTableParams({ pagination }));
+        dispatch(setTableLoading(false));
+      }
+    } catch (error: any) {
+      console.log('error', error);
+    }
+  }
+);
 
 export const guardarContacto = createAsyncThunk(
   'CONTACTO_REDUCERS/GUARDAR_CONTACTO',
-  async (form: FormInstance, thunkAPI) => {
+  async ({ form, setEmpresaChecked }: { form: FormInstance; setEmpresaChecked: Dispatch<SetStateAction<boolean>> }) => {
     try {
-      const { contacto } = (thunkAPI.getState() as RootState).contacto;
       const res = await fetch(`/api/contactos/crear`, {
         method: 'POST',
         body: JSON.stringify({
-          ...contacto,
+          ...form.getFieldsValue(),
         }),
         headers: {
           'Content-Type': 'application/json',
@@ -65,20 +107,55 @@ export const guardarContacto = createAsyncThunk(
       const data = await res.json();
       if (!res.ok) {
         if (res.status === 401) {
-          fetch(`/auth/logout`, {
-            method: 'POST',
-            body: JSON.stringify({
-              refreshToken: data ? data.user?.refreshToken : null,
-            }),
-          }).then(() => signOut());
+          fetch(`/api/auth/logout`).then(() => signOut());
         } else {
           Notify('warn', `${data?.data?.message}`);
         }
       } else {
-        Notify('success', `Contacto: ${contacto.nombres} ${contacto.apellidos} creado`);
+        Notify('success', `Contacto creado`);
         form.resetFields();
+        setEmpresaChecked(false);
       }
     } catch (error: any) {}
+  }
+);
+
+export const suggestContacto = createAsyncThunk(
+  'CONTACTO_REDUCERS/SUGGEST_CONTACTO',
+  async (cedula: string, { dispatch }) => {
+    try {
+      const res = await fetch(`/api/contactos/suggest`, {
+        method: 'POST',
+        body: JSON.stringify(cedula),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        if (res.status === 401) {
+          fetch(`/api/auth/logout`).then(() => signOut());
+        } else {
+          Notify('warn', `${data?.data?.message}`);
+        }
+      } else {
+        const suggestions = data.data.suggestions as IContacto[];
+        dispatch(setSuggestions(suggestions));
+      }
+    } catch (error: any) {}
+  }
+);
+
+export const selectContacto = createAsyncThunk(
+  'CONTACTO_REDUCERS/SELECTED_CONTACTO',
+  ({ cedula, type }: { cedula: string | null; type: 'Contratante' | 'Vendedor' }, { dispatch, getState }) => {
+    const { suggestions } = (getState() as RootState).contacto;
+    const contacto = suggestions.find((contacto) => contacto.cedula === cedula);
+    if (type === 'Contratante') {
+      dispatch(setSelectedContacto(contacto ?? null));
+    } else {
+      dispatch(setSelectedIntermediario(contacto ?? null));
+    }
   }
 );
 
@@ -89,7 +166,7 @@ const contactoSlice = createSlice({
     setContacto: (state, action: PayloadAction<IContactoState['contacto']>) => {
       state.contacto = { ...state.contacto, ...action.payload };
     },
-    setContactos: (state, action: PayloadAction<ContactoQueryResult>) => {
+    setContactos: (state, action: PayloadAction<PaginatedResult<IContacto>>) => {
       state.contactos = action.payload;
     },
     setSaving: (state, action: PayloadAction<boolean>) => {
@@ -127,44 +204,29 @@ const contactoSlice = createSlice({
         },
       };
     },
+    setSuggestions: (state, action: PayloadAction<IContacto[]>) => {
+      state.suggestions = action.payload;
+    },
+    setSelectedContacto: (state, action: PayloadAction<IContacto | null>) => {
+      state.selectedContacto = action.payload;
+    },
+    setSelectedIntermediario: (state, action: PayloadAction<IContacto | null>) => {
+      state.selectedIntermediario = action.payload;
+    },
+    setPagination: (state, action: PayloadAction<TablePaginationConfig>) => {
+      state.pagination = action.payload;
+    },
   },
 });
 
-type QueryContacto = {
-  limit: number;
-  page: number;
-  sortBy?: string;
-};
-
-export const verContactos = createAsyncThunk(
-  'CONTACTO_REDUCERS/VER_CONTACTOS',
-  async (query: QueryContacto, { dispatch }) => {
-    try {
-      console.log('bbb', `/api/contactos/ver?${qs.stringify(query)}`);
-
-      const res = await fetch(`/api/contactos/ver?${qs.stringify(query)}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        if (res.status === 401) {
-          throw Error('token expired');
-        } else {
-          Notify('warn', `${data?.data?.message}`);
-        }
-      } else {
-        // Notify('success', `Contacto: ${contacto.nombres} ${contacto.apellidos} creado`);
-        dispatch(setContactos(data.contactos as ContactoQueryResult));
-      }
-    } catch (error: any) {
-      console.log('error', error);
-    }
-  }
-);
-
-export const { setContacto, clearContacto, setSaving, setContactos } = contactoSlice.actions;
+export const {
+  setContacto,
+  clearContacto,
+  setSaving,
+  setContactos,
+  setSuggestions,
+  setSelectedContacto,
+  setSelectedIntermediario,
+} = contactoSlice.actions;
 
 export default contactoSlice.reducer;

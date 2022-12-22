@@ -16,7 +16,7 @@ function Contactos({}: Props): JSX.Element {
       <Head>
         <title>Plan Ocaso | Contactos</title>
       </Head>
-      <div>Gestión de Contactos</div>
+      <h3 style={{ textAlign: 'center', padding: '20px' }}>Gestión de Contactos</h3>
     </>
   );
 }

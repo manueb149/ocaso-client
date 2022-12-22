@@ -72,7 +72,7 @@ const SignIn: NextPage<Props> = (): JSX.Element => {
                     rules={[{ required: true, message: 'Ingrese su usuario' }]}
                     style={{ color: '#050550' }}
                   >
-                    <Input type="email" size="large" placeholder="usuario" />
+                    <Input type="email" size="large" placeholder="usuario" autoComplete="username" />
                   </Form.Item>
                   <Form.Item
                     name="password"
@@ -80,7 +80,7 @@ const SignIn: NextPage<Props> = (): JSX.Element => {
                     rules={[{ required: true, message: 'Ingrese su clave' }]}
                     style={{ marginBottom: '12px' }}
                   >
-                    <Input.Password placeholder="escriba su clave aquí" size="large" />
+                    <Input.Password placeholder="escriba su clave aquí" size="large" autoComplete="current-password" />
                   </Form.Item>
                   <div style={{ height: '12px', color: '#050550' }}></div>
                   <Button

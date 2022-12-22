@@ -34,7 +34,7 @@ export const authOptions: NextAuthOptions = {
         const data = await res.json();
 
         if (!res.ok) {
-          throw new Error('Wrong Username or password');
+          throw new Error('Usuario o contraseña erronea');
         }
         if (res.ok && data) {
           // depends on backend structure

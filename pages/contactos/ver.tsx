@@ -8,15 +8,19 @@ import { AppDispatch, RootState } from '../../config/configureStore';
 import { setMainSectionLoading } from '../../slices/layout.slice';
 import { useEffect } from 'react';
 import Loading from '../../src/Components/Loading/Loading';
-import ContactoTable from './contactoTable';
+import Table from '../../src/Components/Table/Table';
+import { PaginatedResult } from '../../src/models/types.model';
+import { IContacto } from '../../src/models/interfaces.model';
 
-interface Props {}
+interface Props {
+  initialData?: PaginatedResult<IContacto>;
+}
 
 /**
  * Contactos module
  * @return {JSX.Element} Contactos module JSX
  */
-function ContactosVer({}: Props): JSX.Element {
+function ContactosVer({ initialData }: Props): JSX.Element {
   const { isMainSectionLoading } = useSelector((state: RootState) => state.layout);
 
   const dispatch = useDispatch<AppDispatch>();
@@ -36,15 +40,16 @@ function ContactosVer({}: Props): JSX.Element {
       <Head>
         <title>Plan Ocaso | Ver Contactos</title>
       </Head>
-      <div>Listado de Contactos</div>
-      <ContactoTable />
+      <h3 style={{ textAlign: 'center', padding: '20px' }}>Listado de Contactos</h3>
+      <section className="ver-contactos">
+        <Table />
+      </section>
     </>
   );
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const session = await getServerSession(req, res, authOptions);
-
   if (!session) {
     return {
       redirect: {
