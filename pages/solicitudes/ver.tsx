@@ -8,6 +8,7 @@ import { AppDispatch, RootState } from '../../config/configureStore';
 import { setMainSectionLoading } from '../../slices/layout.slice';
 import { useEffect } from 'react';
 import Loading from '../../src/Components/Loading/Loading';
+import TableView from '../../src/Components/Table/Table';
 
 interface Props {}
 
@@ -32,7 +33,10 @@ function SolicitudesVer({}: Props): JSX.Element {
       <Head>
         <title>Plan Ocaso | Ver Solicitudes</title>
       </Head>
-      <div>Listado de Solicitudes</div>
+      <h3 style={{ textAlign: 'center', padding: '20px' }}>Listado de Solicitudes</h3>
+      <section className="ver-solicitudes">
+        <TableView />
+      </section>
     </>
   );
 }

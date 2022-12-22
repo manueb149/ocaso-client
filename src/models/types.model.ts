@@ -9,6 +9,14 @@ export type NextPageWithLayout = AppProps['Component'] & {
   layout?: React.ElementType;
 };
 
+export type PaginatedResult<T> = {
+  results: T[];
+  page: number;
+  limit: number;
+  totalPages: number;
+  totalResults: number;
+};
+
 // LAYOUT
 export type MenuItem = Required<MenuProps>['items'][number];
 

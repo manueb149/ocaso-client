@@ -1,16 +1,15 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { unstable_getServerSession as getServerSession } from 'next-auth';
-import { IContactoState } from '../../../slices/models/interfaces';
 import { authOptions, BASE_URL } from '../auth/[...nextauth]';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getServerSession(req, res, authOptions);
   try {
-    const contacto = req.body as IContactoState;
-    const response = await fetch(`${BASE_URL}/contactos`, {
+    const payload = req.body as string;
+    const response = await fetch(`${BASE_URL}/contactos/suggest`, {
       method: 'POST',
-      body: JSON.stringify({ ...contacto }),
+      body: JSON.stringify({ cedula: payload }),
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${session?.user?.accessToken}`,

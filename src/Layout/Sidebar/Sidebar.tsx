@@ -33,6 +33,7 @@ const Sidebar: React.FC = (): JSX.Element => {
   const router = useRouter();
 
   useEffect(() => {
+    dispatch(setMainSectionLoading(false));
     dispatch(setSelectedModule((localStorage.getItem('lastTab') as Modules) || Modules.Solicitudes));
     // if (pageWidth <= 992) dispatch(setEnableClosedSidebar(true));
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -42,13 +43,14 @@ const Sidebar: React.FC = (): JSX.Element => {
     const currentPath = `${event.key}`;
     dispatch(setSelectedModule(event.key as Modules));
     if (currentPath !== router.asPath.slice(1)) {
+      console.log(currentPath, router.asPath.slice(1));
       dispatch(setMainSectionLoading(true));
     }
     router.push(`/${currentPath}`);
   };
 
   return (
-    <aside>
+    <aside className="noselect">
       <Sider
         theme="dark"
         trigger={null}
@@ -68,7 +70,7 @@ const Sidebar: React.FC = (): JSX.Element => {
           defaultSelectedKeys={[Modules.Solicitudes]}
           selectedKeys={[router.asPath.slice(1)]}
           items={items}
-          onClick={(e) => onChangePath(e)}
+          onClick={onChangePath}
           style={{ fontWeight: '500' }}
           disabled={isMainSectionLoading}
         />

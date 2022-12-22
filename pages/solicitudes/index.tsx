@@ -16,7 +16,7 @@ function Solicitudes({}: Props): JSX.Element {
       <Head>
         <title>Plan Ocaso | Solicitudes</title>
       </Head>
-      <div>Gestión de Solicitudes</div>
+      <h3 style={{ textAlign: 'center', padding: '20px' }}>Gestión de Solicitudes</h3>
     </>
   );
 }

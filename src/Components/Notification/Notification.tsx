@@ -1,6 +1,10 @@
 import { ToastContainer } from 'react-toastify';
 
-const Notification: React.FC = () => {
+/**
+ * Toast notificator container.
+ * @return {JSX.Element} Loading screen JSX
+ */
+const Notification: React.FC = (): JSX.Element => {
   return (
     <>
       <ToastContainer

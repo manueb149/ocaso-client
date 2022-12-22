@@ -5,44 +5,58 @@ import { authOptions } from '../api/auth/[...nextauth]';
 import AppContainer from '../../src/Layout/AppContainer/AppContainer';
 import { AppDispatch, RootState } from '../../config/configureStore';
 import { useDispatch, useSelector } from 'react-redux';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { setMainSectionLoading } from '../../slices/layout.slice';
 import Loading from '../../src/Components/Loading/Loading';
-// import { SearchOutlined } from '@ant-design/icons';
-import { Button, Col, Form, Input, Row, Select, DatePicker, Space } from 'antd';
+import { Button, Form, Input, Select, DatePicker, Space, Checkbox } from 'antd';
 import { formItemLayout, tailFormItemLayout } from '../../src/data/pages/contactos/crear/formData';
 import { IContactoState } from '../../slices/models/interfaces';
 import { guardarContacto, setContacto } from '../../slices/contacto.slice';
 import { Dayjs } from 'dayjs';
+import { CheckboxChangeEvent } from 'antd/es/checkbox';
 
-const { Option } = Select;
+/**
+ * TODO
+ * [X] TODO MAYUSCULA
+ * [X] checkbox de empresa (agregar campo nombre empresa)
+ */
 
 interface Props {}
-
 /**
  * Contactos module
  * @return {JSX.Element} Contactos module JSX
  */
 function ContactosCrear({}: Props): JSX.Element {
   // State management
+  const [empresaChecked, setEmpresaChecked] = useState<boolean>(false);
   const { isMainSectionLoading } = useSelector((state: RootState) => state.layout);
   const dispatch = useDispatch<AppDispatch>();
 
   // Form management
-
   const [form] = Form.useForm<IContactoState['contacto']>();
 
   const onFinish = (contacto: IContactoState['contacto']) => {
     dispatch(
       setContacto({
         ...contacto,
-        dob: (contacto.dob! as Dayjs).toISOString(),
+        dob: empresaChecked ? new Date('2000-01-01').toISOString() : (contacto.dob! as Dayjs).toISOString(),
       })
     );
-    dispatch(guardarContacto(form));
+    dispatch(guardarContacto({ form, setEmpresaChecked }));
+  };
+  // End Form management
+
+  const handleEmpresaChange = (e: CheckboxChangeEvent) => {
+    setEmpresaChecked(e.target.checked);
+    if (e.target.checked) {
+      form.setFieldValue('eCivil', undefined);
+      form.setFieldValue('sexo', undefined);
+      form.setFieldValue('dob', undefined);
+    } else {
+      form.resetFields();
+    }
   };
 
-  // End Form management
   useEffect(() => {
     dispatch(setMainSectionLoading(false));
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -57,46 +71,68 @@ function ContactosCrear({}: Props): JSX.Element {
         <title>Plan Ocaso | Crear Contacto</title>
       </Head>
 
-      <h3 style={{ textAlign: 'center', padding: '20px' }}>Creación de Contacto/Contratante</h3>
+      <h3 style={{ textAlign: 'center', padding: '20px' }}>Creación de Contacto</h3>
 
-      <section id="crear-contacto" style={{ padding: '10px 10px 10px 0px' }}>
-        <Form {...formItemLayout} form={form} name="createContact" onFinish={onFinish}>
-          <Row gutter={[8, 8]}>
-            <Col span={12}>
+      <section id="crear-contacto" style={{ padding: '10px 30px 10px 0px' }}>
+        <Form {...formItemLayout} form={form} name="createContacto" onFinish={onFinish}>
+          <div className="row">
+            <div className="col-xs-12 col-sm-12 col-md-12 col-lg-6 col-xl-6">
               <Form.Item
                 name="nombres"
-                label="Nombres"
+                label={empresaChecked ? 'Nombre' : 'Nombres'}
                 tooltip="Primer y/o segundo nombre"
                 hasFeedback
                 rules={[
                   {
                     required: true,
-                    pattern: new RegExp(/^[a-zA-Z\s]*$/),
+                    pattern: new RegExp(/^[ A-Za-z0-9_@./#&+-]*$/),
                     message: 'Favor ingresar solo letras',
                   },
                   { required: true, message: 'Favor ingrese un nombre', whitespace: true },
                 ]}
               >
-                <Input placeholder="Juan José" />
+                <Input
+                  onInput={(e) =>
+                    ((e.target as HTMLInputElement).value = (e.target as HTMLInputElement).value.toUpperCase())
+                  }
+                  placeholder={empresaChecked ? 'SOLUSERVICES SRL' : 'JOSE JOSE'}
+                />
               </Form.Item>
 
-              <Form.Item
-                name="apellidos"
-                label="Apellidos"
-                tooltip="Primer y segundo apellido"
-                hasFeedback
-                rules={[
-                  { required: true, pattern: new RegExp(/^[a-zA-Z\s]*$/), message: 'Favor ingresar solo letras' },
-                  { required: true, message: 'Favor ingrese un apellido', whitespace: true },
-                ]}
-              >
-                <Input placeholder="Perez Perez" />
-              </Form.Item>
+              {empresaChecked ? null : (
+                <Form.Item
+                  name="apellidos"
+                  label="Apellidos"
+                  tooltip="Primer y segundo apellido"
+                  hasFeedback
+                  required={!empresaChecked}
+                  rules={[
+                    {
+                      required: !empresaChecked,
+                      pattern: new RegExp(/^[a-zA-Z\s]*$/),
+                      message: 'Favor ingresar solo letras',
+                    },
+                    {
+                      required: !empresaChecked,
+                      message: 'Favor ingrese un apellido',
+                      whitespace: true,
+                    },
+                  ]}
+                >
+                  <Input
+                    onInput={(e) =>
+                      ((e.target as HTMLInputElement).value = (e.target as HTMLInputElement).value.toUpperCase())
+                    }
+                    placeholder="PEREZ PEREZ"
+                  />
+                </Form.Item>
+              )}
 
               <Form.Item
                 name="cedula"
                 label="Cédula"
                 tooltip="Cédula Electoral"
+                hasFeedback
                 rules={[
                   { required: true, message: 'Favor ingrese la cédula' },
                   { max: 13, message: 'No se permiten más dígitos' },
@@ -106,8 +142,12 @@ function ContactosCrear({}: Props): JSX.Element {
                   },
                 ]}
               >
-                <Input placeholder="xxx-xxxxxxx-x" />
+                <Input placeholder="XXX-XXXXXXX-X" />
               </Form.Item>
+
+              {/* <Form.Item name="pasaporte" label="Pasaporte" tooltip="Numero de Pasaporte">
+                <Input />
+              </Form.Item> */}
 
               <Form.Item
                 name="rnc"
@@ -119,61 +159,72 @@ function ContactosCrear({}: Props): JSX.Element {
                   { required: false, pattern: new RegExp(/^[0-9]*$/), message: 'Favor ingresar solo números' },
                 ]}
               >
-                <Input placeholder="22300344078" />
+                <Input placeholder="XXXXXXXXXXX" allowClear />
               </Form.Item>
 
-              <Form.Item
-                name="dob"
-                label="Fecha de nacimiento"
-                rules={[{ type: 'object' as const, required: true, message: 'Favor ingresar una fecha' }]}
-                hasFeedback
-              >
-                <DatePicker placeholder="YYYY-MM-DD" />
-              </Form.Item>
+              {empresaChecked ? null : (
+                <Form.Item
+                  name="dob"
+                  label="Fecha de nacimiento"
+                  rules={[{ type: 'object' as const, required: true, message: 'Favor ingresar una fecha' }]}
+                  hasFeedback
+                >
+                  <DatePicker placeholder="YYYY-MM-DD" />
+                </Form.Item>
+              )}
 
-              <Form.Item
-                name="eCivil"
-                label="Estado Civil"
-                rules={[{ required: true, message: 'Favor escoger una opción' }]}
-              >
-                <Select placeholder="estado civil" allowClear>
-                  <Option value="SO">Soltero</Option>
-                  <Option value="CA">Casado</Option>
-                  <Option value="DI">Divorciado</Option>
-                  <Option value="VI">Viudo</Option>
-                  <Option value="UN">Unión libre</Option>
-                  <Option value="O">Otro</Option>
-                </Select>
-              </Form.Item>
+              {empresaChecked ? null : (
+                <Form.Item
+                  name="eCivil"
+                  label="Estado Civil"
+                  rules={[{ required: true, message: 'Favor escoger una opción' }]}
+                >
+                  <Select
+                    placeholder="estado civil"
+                    allowClear
+                    options={[
+                      { value: 'SO', label: 'Soltero' },
+                      { value: 'CA', label: 'Casado' },
+                      { value: 'DI', label: 'Divorciado' },
+                      { value: 'VI', label: 'Viudo' },
+                      { value: 'UN', label: 'Unión libre' },
+                      { value: 'OTRO', label: 'Otro' },
+                    ]}
+                  />
+                </Form.Item>
+              )}
 
-              <Form.Item name="sexo" label="Género" rules={[{ required: true, message: 'Favor escoger una opción' }]}>
-                <Select
-                  allowClear
-                  placeholder="selecciona un género"
-                  options={[
-                    { value: 'M', label: 'Masculino' },
-                    { value: 'F', label: 'Femenino' },
-                    { value: 'O', label: 'Otro' },
-                  ]}
-                />
-              </Form.Item>
+              {empresaChecked ? null : (
+                <Form.Item name="sexo" label="Género" rules={[{ required: true, message: 'Favor escoger una opción' }]}>
+                  <Select
+                    allowClear
+                    placeholder="selecciona un género"
+                    options={[
+                      { value: 'M', label: 'Masculino' },
+                      { value: 'F', label: 'Femenino' },
+                      { value: 'O', label: 'Otro' },
+                    ]}
+                  />
+                </Form.Item>
+              )}
 
               <Form.Item
                 name="email"
                 label="Email"
-                hasFeedback
                 rules={[
                   {
                     type: 'email',
                     message: 'email no válido',
                   },
-                  {
-                    required: true,
-                    message: 'Favor ingresar un email',
-                  },
                 ]}
               >
-                <Input autoComplete="off" placeholder="Correo electrónico" />
+                <Input
+                  onInput={(e) =>
+                    ((e.target as HTMLInputElement).value = (e.target as HTMLInputElement).value.toLowerCase())
+                  }
+                  autoComplete="off"
+                  placeholder="Correo electrónico"
+                />
               </Form.Item>
 
               <Form.Item
@@ -197,94 +248,11 @@ function ContactosCrear({}: Props): JSX.Element {
               >
                 <Input placeholder="xxx-xxx-xxxx" />
               </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                name={['direccion', 'calle']}
-                label="Calle"
-                tooltip="Nombre de la calle donde reside"
-                hasFeedback
-                rules={[
-                  { required: true, pattern: new RegExp(/^[a-zA-z0-9\s.#]*$/), message: 'Formato inválido' },
-                  { required: true, message: 'Favor ingrese una calle', whitespace: true },
-                ]}
-              >
-                <Input placeholder="Calle Amapola #7" />
-              </Form.Item>
-
-              <Form.Item
-                name={['direccion', 'sector']}
-                label="Sector"
-                tooltip="Nombre del sector donde reside"
-                hasFeedback
-                rules={[
-                  { required: true, pattern: new RegExp(/^[a-zA-z0-9\s.#]*$/), message: 'Formato inválido' },
-                  { required: true, message: 'Favor ingrese un sector', whitespace: true },
-                ]}
-              >
-                <Input placeholder="Villa Juana" />
-              </Form.Item>
-
-              <Form.Item
-                name={['direccion', 'zip']}
-                label="Código postal"
-                tooltip="Código postal del sector donde reside"
-                hasFeedback
-                rules={[{ pattern: new RegExp(/^[\d]{0,5}$/), message: 'Formato inválido' }]}
-              >
-                <Input placeholder="11000" />
-              </Form.Item>
-
-              <Form.Item
-                name={['direccion', 'pais', 'codigo']}
-                label="pais"
-                rules={[{ required: true, message: 'Favor escoger una opción' }]}
-              >
-                <Select placeholder="selecciona un pais" allowClear>
-                  <Option value="RD">República Dominicana</Option>
-                  <Option value="O">Otro</Option>
-                </Select>
-              </Form.Item>
-
-              <Form.Item
-                name={['direccion', 'region', 'codigo']}
-                label="Región"
-                rules={[{ required: true, message: 'Favor escoger una opción' }]}
-              >
-                <Select placeholder="selecciona una región" allowClear>
-                  <Option value="N">Norte/Cibao</Option>
-                  <Option value="S">Sur</Option>
-                  <Option value="E">Este</Option>
-                </Select>
-              </Form.Item>
-
-              <Form.Item
-                name={['direccion', 'provincia', 'codigo']}
-                label="Provincia"
-                rules={[{ required: true, message: 'Favor escoger una opción' }]}
-              >
-                <Select placeholder="selecciona un provincia" allowClear>
-                  <Option value="SD">Santo Domingo</Option>
-                </Select>
-              </Form.Item>
-
-              <Form.Item
-                name={['direccion', 'municipio', 'codigo']}
-                label="Municipio"
-                rules={[{ required: true, message: 'Favor escoger una opción' }]}
-              >
-                <Select placeholder="selecciona un municipio" allowClear>
-                  <Option value="DN">Distrito Nacional</Option>
-                  <Option value="SDN">Santo Domingo Norte</Option>
-                  <Option value="SDE">Santo Domingo Este</Option>
-                  <Option value="SDO">Santo Domingo Oeste</Option>
-                </Select>
-              </Form.Item>
 
               <Form.Item
                 name="tel"
                 label="Telefono"
-                tooltip="Número de telefono residencial"
+                tooltip="Número de telefono residencial/referencia"
                 hasFeedback
                 rules={[
                   { max: 12, message: 'No se permiten más dígitos' },
@@ -300,15 +268,153 @@ function ContactosCrear({}: Props): JSX.Element {
               >
                 <Input placeholder="xxx-xxx-xxxx" />
               </Form.Item>
-            </Col>
-          </Row>
+            </div>
+            <div className="col-xs-12 col-sm-12 col-md-12 col-lg-6 col-xl-6">
+              <Form.Item
+                name={['direccion', 'pais', 'codigo']}
+                label="País"
+                rules={[{ required: true, message: 'Favor escoger una opción' }]}
+              >
+                <Select
+                  placeholder="selecciona un pais"
+                  allowClear
+                  options={[
+                    { value: 'RD', label: 'República Dominicana' },
+                    { value: 'OTRO', label: 'Otro' },
+                  ]}
+                />
+              </Form.Item>
+
+              <Form.Item
+                name={['direccion', 'region', 'codigo']}
+                label="Región"
+                rules={[{ required: true, message: 'Favor escoger una opción' }]}
+              >
+                <Select
+                  placeholder="selecciona una región"
+                  allowClear
+                  options={[
+                    { value: 'N', label: 'Norte(Cibao)' },
+                    { value: 'S', label: 'Sur' },
+                    { value: 'E', label: 'Este' },
+                  ]}
+                />
+              </Form.Item>
+
+              <Form.Item
+                name={['direccion', 'provincia', 'codigo']}
+                label="Provincia"
+                rules={[{ required: true, message: 'Favor escoger una opción' }]}
+              >
+                <Select
+                  placeholder="selecciona un provincia"
+                  allowClear
+                  options={[
+                    { value: 'SD', label: 'Santo Domingo' },
+                    { value: 'OTRO', label: 'Otro' },
+                  ]}
+                />
+              </Form.Item>
+
+              <Form.Item
+                name={['direccion', 'municipio', 'codigo']}
+                label="Municipio"
+                rules={[{ required: true, message: 'Favor escoger una opción' }]}
+              >
+                <Select
+                  placeholder="selecciona un municipio"
+                  allowClear
+                  options={[
+                    { value: 'DN', label: 'Distrito Nacional' },
+                    { value: 'SDN', label: 'Santo Domingo Norte' },
+                    { value: 'SDE', label: 'Santo Domingo Este' },
+                    { value: 'SDO', label: 'Santo Domingo Oeste' },
+                  ]}
+                />
+              </Form.Item>
+
+              <Form.Item
+                name={['direccion', 'sector']}
+                label="Sector/Barrio"
+                tooltip="Nombre del sector donde reside"
+                hasFeedback
+                rules={[
+                  {
+                    required: true,
+                    pattern: new RegExp(/^[a-zA-z0-9\s.#]*$/),
+                    message: 'Formato inválido',
+                  },
+                  { required: true, message: 'Favor ingrese un sector', whitespace: true },
+                ]}
+              >
+                <Input
+                  onInput={(e) =>
+                    ((e.target as HTMLInputElement).value = (e.target as HTMLInputElement).value.toUpperCase())
+                  }
+                  placeholder="VILLA JUANA"
+                />
+              </Form.Item>
+
+              <Form.Item
+                name={['direccion', 'calle']}
+                label="Calle"
+                tooltip="Nombre de la calle donde reside"
+                hasFeedback
+                rules={[
+                  {
+                    required: true,
+                    pattern: new RegExp(/^[a-zA-z0-9\s.#]*$/),
+                    message: 'Formato inválido',
+                  },
+                  { required: true, message: 'Favor ingrese una calle', whitespace: true },
+                ]}
+              >
+                <Input
+                  onInput={(e) =>
+                    ((e.target as HTMLInputElement).value = (e.target as HTMLInputElement).value.toUpperCase())
+                  }
+                  placeholder="CALLE AMAPOLA #7"
+                />
+              </Form.Item>
+
+              <Form.Item name="referencia" label="Punto de referencia" rules={[{}]}>
+                <Input.TextArea
+                  onInput={(e) =>
+                    ((e.target as HTMLInputElement).value = (e.target as HTMLInputElement).value.toUpperCase())
+                  }
+                  placeholder="CASI ESQUINA CON LA SALVIA, DETRAS DEL BRAVO."
+                />
+              </Form.Item>
+
+              <Form.Item
+                name={['direccion', 'zip']}
+                label="Código postal"
+                tooltip="Código postal del sector donde reside"
+                hasFeedback
+                rules={[{ pattern: new RegExp(/^[\d]{0,5}$/), message: 'Formato inválido' }]}
+              >
+                <Input placeholder="11000" />
+              </Form.Item>
+
+              <Form.Item valuePropName="checked" name="empresa" style={{ textAlign: 'center', alignItems: 'flex-end' }}>
+                <Checkbox onChange={handleEmpresaChange}>Es una empresa</Checkbox>
+              </Form.Item>
+            </div>
+          </div>
 
           <Form.Item {...tailFormItemLayout}>
             <Space style={{ display: 'flex', justifyContent: 'center' }}>
               <Button type="primary" htmlType="submit">
                 Crear
               </Button>
-              <Button onClick={() => form.resetFields()}>Limpiar</Button>
+              <Button
+                onClick={() => {
+                  form.resetFields();
+                  setEmpresaChecked(false);
+                }}
+              >
+                Limpiar
+              </Button>
             </Space>
           </Form.Item>
         </Form>
