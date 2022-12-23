@@ -6,7 +6,7 @@ import { Notify } from '../config/notifications';
 import { IContactoState, ITableParams } from './models/interfaces';
 import qs from 'querystring';
 import { IContacto } from '../src/models/interfaces.model';
-import { getContactoParams } from '../utils/getContactoParams';
+import { getTableParams } from '../utils/getTableParams';
 import { setTableLoading, setTableParams } from './table.slice';
 import { Dispatch, SetStateAction } from 'react';
 import { PaginatedResult } from '../src/models/types.model';
@@ -62,7 +62,7 @@ export const verContactos = createAsyncThunk(
   async (params: ITableParams | undefined, { dispatch }) => {
     try {
       dispatch(setTableLoading(true));
-      const res = await fetch(`/api/contactos/ver?${qs.stringify(getContactoParams(params))}`, {
+      const res = await fetch(`/api/contactos/ver?${qs.stringify(getTableParams(params))}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

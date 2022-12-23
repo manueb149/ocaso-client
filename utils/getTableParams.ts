@@ -1,12 +1,11 @@
-import { ContactoQuery, ITableParams } from '../slices/models/interfaces';
+import { TableQuery, ITableParams } from '../slices/models/interfaces';
 
-export const getContactoParams = (params?: ITableParams): ContactoQuery => {
-  let filters: {
-    limit: number;
-    page: number;
-    sortBy?: string;
-    sexo?: string;
-  } = {
+interface CustomTableQuery extends TableQuery {
+  [key: string]: string | number | undefined;
+}
+
+export const getTableParams = (params?: ITableParams): TableQuery => {
+  let filters: CustomTableQuery = {
     limit: params?.pagination?.pageSize ?? 10,
     page: params?.pagination?.current ?? 1,
   };

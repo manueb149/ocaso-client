@@ -8,7 +8,7 @@ import { AppDispatch, RootState } from '../../config/configureStore';
 import { setMainSectionLoading } from '../../slices/layout.slice';
 import { useEffect } from 'react';
 import Loading from '../../src/Components/Loading/Loading';
-import Table from '../../src/Components/Table/Table';
+import TableContacto from '../../src/Components/Table/TableContacto';
 import { PaginatedResult } from '../../src/models/types.model';
 import { IContacto } from '../../src/models/interfaces.model';
 
@@ -42,7 +42,7 @@ function ContactosVer({ initialData }: Props): JSX.Element {
       </Head>
       <h3 style={{ textAlign: 'center', padding: '20px' }}>Listado de Contactos</h3>
       <section className="ver-contactos">
-        <Table />
+        <TableContacto />
       </section>
     </>
   );

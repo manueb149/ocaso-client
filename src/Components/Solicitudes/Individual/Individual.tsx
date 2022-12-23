@@ -51,7 +51,10 @@ const Individual: React.FC<Props> = ({ planes }) => {
               <Dependientes name="dependiente" form={formDependientes} next={next} />
             </div>
             <div className="row" style={{ display: current === 2 ? 'flex' : 'none' }}>
-              <Review />
+              <Review
+                contratanteInfo={formContratante.getFieldsValue()}
+                dependientesInfo={formDependientes.getFieldsValue()?.inscritos ?? []}
+              />
             </div>
             <div className="steps-action" style={{ display: 'flex', justifyContent: 'center', padding: '10px 0 0 0' }}>
               {current < steps.length - 1 && (
