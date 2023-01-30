@@ -1,4 +1,7 @@
-import { Content } from 'antd/lib/layout/layout';
+import { Layout } from 'antd';
+import Modals from '../../Components/Modals';
+
+const { Content } = Layout;
 
 interface Props extends React.HTMLAttributes<HTMLElement> {
   children?: React.ReactNode;
@@ -12,6 +15,7 @@ const Main: React.FC<Props> = ({ children, ...rest }): JSX.Element => {
   return (
     <Content>
       <main {...rest}>{children}</main>
+      <Modals />
     </Content>
   );
 };

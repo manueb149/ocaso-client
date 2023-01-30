@@ -1,5 +1,6 @@
 @import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
-@import '../../node_modules/antd/dist/antd.css';
+@import '../../node_modules/antd/dist/reset.css';
+@import '../../node_modules/react-toastify/dist/ReactToastify.css';
 @import './variables.scss';
 @import './Layout/AppContainer.scss';
 
@@ -7,8 +8,8 @@ html,
 body {
   padding: 0;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans,
+    Helvetica Neue, sans-serif;
   background: $light-foreground;
 }
 
@@ -43,6 +44,58 @@ body {
     justify-content: flex-start;
     align-items: center;
   }
+
+  .anticon {
+    font-size: 15px;
+  }
+
+  .ant-form-item-feedback-icon {
+    display: flex;
+  }
+
+  .ant-form-item-label > .ant-form-item-required::before {
+    content: unset !important;
+    display: inline-block;
+    margin-inline-end: 4px;
+    color: #ff4d4f;
+    font-size: 14px;
+    font-family: SimSun, sans-serif;
+    line-height: 1;
+  }
+
+  .ant-form-item-label > .ant-form-item-required::after {
+    content: '*' !important;
+    display: inline-block;
+    margin-inline-end: 4px;
+    color: #ff4d4f;
+    font-size: 14px;
+    font-family: SimSun, sans-serif;
+    line-height: 1;
+    padding: 0px 2px;
+  }
+
+  .ant-select .ant-select-clear {
+    top: 50%;
+    right: 11px;
+    transform: translate(-15%, -70%);
+    margin-top: 0px;
+  }
+
+  .noselect {
+    -webkit-touch-callout: none;
+    /* iOS Safari */
+    -webkit-user-select: none;
+    /* Safari */
+    -khtml-user-select: none;
+    /* Konqueror HTML */
+    -moz-user-select: none;
+    /* Old versions of Firefox */
+    -ms-user-select: none;
+    /* Internet Explorer/Edge */
+    user-select: none;
+    /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+  }
 }
 
 a {
@@ -51,7 +104,7 @@ a {
 }
 
 *::-webkit-scrollbar-thumb {
-  background-color: #0e47c371;
+  background-color: #001529;
   border: 4px solid transparent;
   border-radius: $outer-border-radius;
   background-clip: padding-box;

@@ -1,7 +1,10 @@
 /* background: url(${backgroundImg}) no-repeat fixed; */
 .login-container {
   min-height: 100vh;
-  background: #fff no-repeat center center fixed;
+  background: url('/bg_login.jpg') no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
   background-size: cover;
   position: relative;
   z-index: 0;
@@ -30,8 +33,7 @@
     background-color: rgba(0, 0, 0, 1);
     opacity: 0.94;
     z-index: 0;
-    box-shadow: 0 0 10px 10px rgba(30, 50, 55, 0.4),
-      0 0 10px rgba(81, 203, 238, 0.6);
+    box-shadow: 0 0 10px 10px rgba(30, 50, 55, 0.4), 0 0 10px rgba(81, 203, 238, 0.6);
 
     .ant-form-item-label > label {
       color: #77ade7;

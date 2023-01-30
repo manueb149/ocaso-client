@@ -1,49 +1,35 @@
 import { Badge } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faExclamationCircle,
-  faPowerOff,
-  faKey,
-  faCog,
-} from '@fortawesome/free-solid-svg-icons';
+import { faExclamationCircle, faPowerOff, faKey, faCog } from '@fortawesome/free-solid-svg-icons';
 import { signOut, useSession } from 'next-auth/react';
 
 import styles from './UserBox.module.scss';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '../../../config/configureStore';
+import { setToggleNewPasswordModal } from '../../../slices/layout.slice';
 
 /**
  * UserBox section for user options.
  * @return {JSX.Element} UserBox section JSX
  */
 const UserBox: React.FC = (): JSX.Element => {
-  const BASE_URL = process.env['PUBLIC_SERVER_ENDPOINT'];
-
   const { data } = useSession();
+  const dispatch = useDispatch<AppDispatch>();
 
   const handleLogOut = () => {
-    fetch(`${BASE_URL}/auth/logout`, {
-      method: 'POST',
-      body: JSON.stringify({
-        refreshToken: data ? data.user?.refreshToken : null,
-      }),
-    }).then(() => signOut());
+    fetch(`/api/auth/logout`).finally(() => signOut());
   };
 
   return (
     <section className={styles['user-box']}>
+      <h6 style={{ marginBottom: '20px', fontWeight: '800', textAlign: 'center' }}>{data?.user?.name!}</h6>
       <h6>Actividades</h6>
       <div className={styles['alerts']}>
         <span className="pointer" onClick={() => {}}>
-          <FontAwesomeIcon
-            style={{ marginRight: '5px' }}
-            icon={faExclamationCircle}
-          />
+          <FontAwesomeIcon style={{ marginRight: '5px' }} icon={faExclamationCircle} />
           Alertas
         </span>
-        <Badge
-          count={[].length}
-          size="default"
-          style={{ backgroundColor: '#1890ff' }}
-        />
+        <Badge count={[].length} size="default" style={{ backgroundColor: '#1890ff' }} />
       </div>
       <h6 style={{ marginTop: '15px' }}>Mi Cuenta</h6>
       <div className={styles['account']}>
@@ -51,7 +37,12 @@ const UserBox: React.FC = (): JSX.Element => {
           <FontAwesomeIcon style={{ marginRight: '5px' }} icon={faCog} />
           Configurar
         </div>
-        <div className="pointer">
+        <div
+          className="pointer"
+          onClick={() => {
+            dispatch(setToggleNewPasswordModal(true));
+          }}
+        >
           <FontAwesomeIcon style={{ marginRight: '5px' }} icon={faKey} />
           Recuperar Clave
         </div>

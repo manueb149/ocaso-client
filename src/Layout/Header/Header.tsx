@@ -1,7 +1,10 @@
-import { createElement, Fragment, useState } from 'react';
+import { createElement, Fragment } from 'react';
 import { Layout } from 'antd';
 import { MenuUnfoldOutlined, MenuFoldOutlined } from '@ant-design/icons';
 import Avatar from '../../Components/Avatar/Avatar';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../../../config/configureStore';
+import { setSidebarClosed } from '../../../slices/layout.slice';
 
 const { Header: HeaderLayour } = Layout;
 
@@ -10,7 +13,8 @@ const { Header: HeaderLayour } = Layout;
  * @return {JSX.Element} Header Section JSX
  */
 const Header: React.FC = (): JSX.Element => {
-  const [collapsed, setCollapsed] = useState(false);
+  const { isSidebarClosed } = useSelector((state: RootState) => state.layout);
+  const dispatch = useDispatch<AppDispatch>();
   const autoClosedSidebar = false;
 
   return (
@@ -21,10 +25,10 @@ const Header: React.FC = (): JSX.Element => {
           padding: 0,
         }}
       >
-        {createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
+        {createElement(isSidebarClosed ? MenuUnfoldOutlined : MenuFoldOutlined, {
           className: 'trigger',
           onClick: () => {
-            if (!autoClosedSidebar) setCollapsed((state) => !state);
+            if (!autoClosedSidebar) dispatch(setSidebarClosed(!isSidebarClosed));
           },
         })}
         <Avatar />
