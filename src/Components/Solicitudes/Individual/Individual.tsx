@@ -3,9 +3,11 @@ import React, { useState } from 'react';
 import Contratante from '../../Contratante/Contratante';
 import Dependientes from '../../Dependientes/Dependientes';
 import Review from './Review';
-import { IDependientes, IPlan } from '../../../models/interfaces.model';
-import { Notify } from '../../../../config/notifications';
+import { IDependientes, IPlan, ISolicitud } from '../../../models/interfaces.model';
 import { Dayjs } from 'dayjs';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../../../../config/configureStore';
+import { guardarSolicitud } from '../../../../slices/solicitud.slice';
 
 const steps = [
   {
@@ -27,6 +29,9 @@ const Individual: React.FC<Props> = ({ planes }) => {
   const [formContratante] = Form.useForm();
   const [formDependientes] = Form.useForm();
   const [current, setCurrent] = useState<number>(0);
+
+  const { saving } = useSelector((state: RootState) => state.solicitud);
+  const dispatch = useDispatch<AppDispatch>();
 
   const next = () => {
     setCurrent(current + 1);
@@ -72,8 +77,9 @@ const Individual: React.FC<Props> = ({ planes }) => {
                 <Button
                   htmlType="submit"
                   type="primary"
+                  disabled={saving}
                   onClick={() => {
-                    console.log({
+                    const solicitud: ISolicitud = {
                       ...(formContratante.getFieldValue('desde') && {
                         desde: (formContratante.getFieldValue('desde') as Dayjs).toISOString(),
                       }),
@@ -95,8 +101,8 @@ const Individual: React.FC<Props> = ({ planes }) => {
                       vigencia: (formContratante.getFieldValue('hasta') as Dayjs)
                         .diff(formContratante.getFieldValue('desde') as Dayjs, 'years', true)
                         .toFixed(1),
-                    });
-                    Notify('success', 'Solicitud guardada!', 5000);
+                    };
+                    dispatch(guardarSolicitud({ solicitud, formContratante, formDependientes, setCurrent }));
                   }}
                 >
                   Finalizar

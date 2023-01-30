@@ -6,6 +6,7 @@ import { AppDispatch, RootState } from '../../../config/configureStore';
 import { verSolicitudes } from '../../../slices/solicitud.slice';
 import { ITableParams } from '../../../slices/models/interfaces';
 import { ISolicitud } from '../../models/interfaces.model';
+
 interface Props {}
 
 const TableSolicitud: React.FC<Props> = () => {
@@ -48,8 +49,18 @@ const TableSolicitud: React.FC<Props> = () => {
       sorter: true,
       width: '20%',
     },
-    { title: 'Desde', dataIndex: 'desde', key: 'desde' },
-    { title: 'Hasta', dataIndex: 'hasta', key: 'hasta' },
+    {
+      title: 'Desde',
+      dataIndex: 'desde',
+      key: 'desde',
+      render: (text) => <>{new Date(text).toLocaleDateString()}</>,
+    },
+    {
+      title: 'Hasta',
+      dataIndex: 'hasta',
+      key: 'hasta',
+      render: (text) => <>{new Date(text).toLocaleDateString()}</>,
+    },
   ];
 
   useEffect(() => {

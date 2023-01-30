@@ -24,7 +24,6 @@ export const solicitudesVer = async (req: any, res: any, session: Session | null
 };
 
 export const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  console.log(req.url);
   const session = await getServerSession(req, res, authOptions);
   const { response, data, error } = await solicitudesVer(req, res, session);
   if (error) {

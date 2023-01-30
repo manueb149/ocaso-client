@@ -1,4 +1,5 @@
 import { Layout } from 'antd';
+import Modals from '../../Components/Modals';
 
 const { Content } = Layout;
 
@@ -14,6 +15,7 @@ const Main: React.FC<Props> = ({ children, ...rest }): JSX.Element => {
   return (
     <Content>
       <main {...rest}>{children}</main>
+      <Modals />
     </Content>
   );
 };

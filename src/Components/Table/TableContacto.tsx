@@ -5,17 +5,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../../config/configureStore';
 import { verContactos } from '../../../slices/contacto.slice';
 import { ITableParams } from '../../../slices/models/interfaces';
-// import { setParams } from '../../../slices/table.slice';
 import { IContacto } from '../../models/interfaces.model';
+
 interface Props {}
 
-// type DataIndex = keyof IContacto;
-
 const TableContacto: React.FC<Props> = () => {
-  // const [searchText, setSearchText] = useState('');
-  // const [searchedColumn, setSearchedColumn] = useState('');
-  // const searchInput = useRef<InputRef>(null);
-
   const { contactos } = useSelector((state: RootState) => state.contacto);
   const { params, loading } = useSelector((state: RootState) => state.table);
 
