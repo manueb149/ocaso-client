@@ -8,9 +8,38 @@ import { AppDispatch, RootState } from '../../config/configureStore';
 import { setMainSectionLoading } from '../../slices/layout.slice';
 import { useEffect } from 'react';
 import Loading from '../../src/Components/Loading/Loading';
-import TableSolicitud from '../../src/Components/Table/TableSolicitud';
+import type { ColumnsType } from 'antd/es/table/interface';
+import type { ISolicitud } from '../../src/models/interfaces.model';
+import GeneralTable from '../../src/Components/Table/GeneralTable';
+import { verSolicitudes } from '../../slices/solicitud.slice';
 
 interface Props {}
+
+const columns: ColumnsType<ISolicitud> = [
+  {
+    title: 'No. Solicitud',
+    dataIndex: 'numSolicitud',
+    key: 'numSolicitud',
+    sorter: true,
+    width: '20%',
+  },
+  {
+    title: 'Contratante',
+    dataIndex: 'contratante',
+    key: 'contratante',
+    sorter: true,
+    width: '20%',
+  },
+  {
+    title: 'Vendedor',
+    dataIndex: 'vendedor',
+    key: 'vendedor',
+    sorter: true,
+    width: '20%',
+  },
+  { title: 'Desde', dataIndex: 'desde', key: 'desde' },
+  { title: 'Hasta', dataIndex: 'hasta', key: 'hasta' },
+];
 
 /**
  * Solicitudes module
@@ -18,6 +47,7 @@ interface Props {}
  */
 function SolicitudesVer({}: Props): JSX.Element {
   const { isMainSectionLoading } = useSelector((state: RootState) => state.layout);
+  const { solicitudes } = useSelector((state: RootState) => state.solicitud);
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
@@ -28,6 +58,7 @@ function SolicitudesVer({}: Props): JSX.Element {
   if (isMainSectionLoading) {
     return <Loading />;
   }
+
   return (
     <>
       <Head>
@@ -35,7 +66,12 @@ function SolicitudesVer({}: Props): JSX.Element {
       </Head>
       <h3 style={{ textAlign: 'center', padding: '20px' }}>Listado de Solicitudes</h3>
       <section className="ver-solicitudes">
-        <TableSolicitud />
+        <GeneralTable
+          columns={columns}
+          data={solicitudes.results}
+          getValues={verSolicitudes}
+          rowKey={(record, i) => record.contratante + i}
+        />
       </section>
     </>
   );

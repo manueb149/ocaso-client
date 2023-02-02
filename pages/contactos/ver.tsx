@@ -8,13 +8,60 @@ import { AppDispatch, RootState } from '../../config/configureStore';
 import { setMainSectionLoading } from '../../slices/layout.slice';
 import { useEffect } from 'react';
 import Loading from '../../src/Components/Loading/Loading';
-import TableContacto from '../../src/Components/Table/TableContacto';
 import { PaginatedResult } from '../../src/models/types.model';
-import { IContacto } from '../../src/models/interfaces.model';
+import type { IContacto } from '../../src/models/interfaces.model';
+import type { ColumnsType } from 'antd/es/table/interface';
+import { verContactos } from '../../slices/contacto.slice';
+import GeneralTable from '../../src/Components/Table/GeneralTable';
 
 interface Props {
   initialData?: PaginatedResult<IContacto>;
 }
+
+const columns: ColumnsType<IContacto> = [
+  {
+    title: 'Nombres',
+    dataIndex: 'nombres',
+    key: 'nombres',
+    sorter: true,
+    width: '20%',
+  },
+  {
+    title: 'Apellidos',
+    dataIndex: 'apellidos',
+    key: 'apellidos',
+    sorter: true,
+    width: '20%',
+  },
+  {
+    title: 'Sexo',
+    dataIndex: 'sexo',
+    key: 'sexo',
+    filterMultiple: false,
+    filters: [
+      { text: 'Masculino', value: 'M' },
+      { text: 'Femenino', value: 'F' },
+    ],
+    width: '20%',
+  },
+  {
+    title: 'Email',
+    dataIndex: 'email',
+    key: 'email',
+  },
+  {
+    title: 'Es Empresa',
+    dataIndex: 'empresa',
+    key: 'empresa',
+    filterMultiple: false,
+    filters: [
+      { text: 'Si', value: true },
+      { text: 'No', value: false },
+    ],
+    width: '20%',
+    render: (value) => (value ? 'Si' : 'No'),
+  },
+];
 
 /**
  * Contactos module
@@ -22,6 +69,7 @@ interface Props {
  */
 function ContactosVer({ initialData }: Props): JSX.Element {
   const { isMainSectionLoading } = useSelector((state: RootState) => state.layout);
+  const { contactos } = useSelector((state: RootState) => state.contacto);
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -34,7 +82,7 @@ function ContactosVer({ initialData }: Props): JSX.Element {
   if (isMainSectionLoading) {
     return <Loading />;
   }
-  // console.log(contactos);
+
   return (
     <>
       <Head>
@@ -42,7 +90,12 @@ function ContactosVer({ initialData }: Props): JSX.Element {
       </Head>
       <h3 style={{ textAlign: 'center', padding: '20px' }}>Listado de Contactos</h3>
       <section className="ver-contactos">
-        <TableContacto />
+        <GeneralTable
+          columns={columns}
+          data={contactos.results}
+          getValues={verContactos}
+          rowKey={(record) => record.cedula}
+        />
       </section>
     </>
   );
