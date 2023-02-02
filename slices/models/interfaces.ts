@@ -8,6 +8,9 @@ export interface ILayoutState {
   isSidebarClosed: boolean;
   isMainSectionLoading: boolean;
   selectedModule: Modules;
+  isAlertsModalOpen: boolean;
+  isConfigModalOpen: boolean;
+  isNewPasswordModalOpen: boolean;
 }
 
 export interface IContactoState {

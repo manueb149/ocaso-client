@@ -6,6 +6,7 @@ import { RootState } from '../../../../config/configureStore';
 import type { Dayjs } from 'dayjs';
 import { Table as TableAnt } from 'antd';
 import type { ColumnsType } from 'antd/es/table/interface';
+import { DependientesOptions, SexoOptions } from '../../Dependientes/Dependientes';
 
 interface ContratanteInfo {
   hasta: Dayjs | string;
@@ -36,22 +37,19 @@ const columns: ColumnsType<IDependientes> = [
     title: 'Fecha de Nacimiento',
     dataIndex: 'dob',
     key: 'dob',
-    render: (value) => value.toLocaleString(),
+    render: (value) => new Date(value).toLocaleDateString(),
   },
   {
     title: 'Sexo',
     dataIndex: 'sexo',
     key: 'sexo',
+    render: (value) => SexoOptions.find((item) => item.value === value)?.label,
   },
   {
     title: 'Parentezco',
     dataIndex: 'parentezco',
     key: 'parentezco',
-  },
-  {
-    title: 'Prima',
-    dataIndex: 'prima',
-    key: 'prima',
+    render: (value) => DependientesOptions.find((item) => item.value === value)?.label,
   },
 ];
 
@@ -79,12 +77,18 @@ const Review: React.FC<Props> = ({ contratanteInfo, dependientesInfo }) => {
         <Descriptions.Item label="Telefono">{tel}</Descriptions.Item>
         <Descriptions.Item label="Correo Elec.">{email}</Descriptions.Item>
       </Descriptions>
-      <Descriptions title="Prima/Plan" layout="vertical" bordered column={3}>
+      <Descriptions title="Prima/Plan" layout="vertical" bordered column={3} style={{ marginTop: '20px' }}>
         <Descriptions.Item label="Plan">{contratanteInfo.plan}</Descriptions.Item>
         <Descriptions.Item label="Prima">{contratanteInfo.prima}</Descriptions.Item>
         <Descriptions.Item label="Valor Asegurado">{contratanteInfo.valor}</Descriptions.Item>
       </Descriptions>
-      <Descriptions title="Detalle de Pendendientes" layout="vertical" bordered column={3}></Descriptions>
+      <Descriptions
+        title="Detalle de Pendendientes"
+        layout="vertical"
+        bordered
+        column={3}
+        style={{ marginTop: '20px' }}
+      ></Descriptions>
       <TableAnt columns={columns} dataSource={dependientesInfo} pagination={false} />
     </>
   );

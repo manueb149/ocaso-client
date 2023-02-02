@@ -76,13 +76,23 @@ export const verSolicitudes = createAsyncThunk(
 
 export const guardarSolicitud = createAsyncThunk(
   'CONTACTO_REDUCERS/GUARDAR_SOLICITUD',
-  async ({ form }: { form: FormInstance }) => {
+  async ({
+    solicitud,
+    formContratante,
+    formDependientes,
+    setCurrent,
+  }: {
+    solicitud: ISolicitud;
+    formContratante: FormInstance;
+    formDependientes: FormInstance;
+    setCurrent: React.Dispatch<React.SetStateAction<number>>;
+  }) => {
     try {
+      console.log(solicitud);
+      setSaving(true);
       const res = await fetch(`/api/solicitudes/crear`, {
         method: 'POST',
-        body: JSON.stringify({
-          ...form.getFieldsValue(),
-        }),
+        body: JSON.stringify(solicitud),
         headers: {
           'Content-Type': 'application/json',
         },
@@ -92,13 +102,24 @@ export const guardarSolicitud = createAsyncThunk(
         if (res.status === 401) {
           fetch(`/api/auth/logout`).then(() => signOut());
         } else {
-          Notify('warn', `${data?.data?.message}`);
+          console.log(data?.solicitudes?.message);
+          Notify('warn', `${data?.solicitudes?.message}`);
         }
       } else {
-        Notify('success', `Solicitud creada`);
-        form.resetFields();
+        console.log(data?.solicitudes?.numSolicitud);
+        Notify('success', `Solicitud #${data?.solicitudes?.numSolicitud} guardada!'`, 5000);
+        formContratante.resetFields();
+        formDependientes.resetFields();
+        setSaving(false);
+        setCurrent(0);
       }
-    } catch (error: any) {}
+    } catch (error: any) {
+      setSaving(false);
+      formContratante.resetFields();
+      formDependientes.resetFields();
+      setSaving(false);
+      setCurrent(0);
+    }
   }
 );
 

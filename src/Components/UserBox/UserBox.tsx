@@ -4,6 +4,9 @@ import { faExclamationCircle, faPowerOff, faKey, faCog } from '@fortawesome/free
 import { signOut, useSession } from 'next-auth/react';
 
 import styles from './UserBox.module.scss';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '../../../config/configureStore';
+import { setToggleNewPasswordModal } from '../../../slices/layout.slice';
 
 /**
  * UserBox section for user options.
@@ -11,6 +14,7 @@ import styles from './UserBox.module.scss';
  */
 const UserBox: React.FC = (): JSX.Element => {
   const { data } = useSession();
+  const dispatch = useDispatch<AppDispatch>();
 
   const handleLogOut = () => {
     fetch(`/api/auth/logout`).finally(() => signOut());
@@ -33,7 +37,12 @@ const UserBox: React.FC = (): JSX.Element => {
           <FontAwesomeIcon style={{ marginRight: '5px' }} icon={faCog} />
           Configurar
         </div>
-        <div className="pointer">
+        <div
+          className="pointer"
+          onClick={() => {
+            dispatch(setToggleNewPasswordModal(true));
+          }}
+        >
           <FontAwesomeIcon style={{ marginRight: '5px' }} icon={faKey} />
           Recuperar Clave
         </div>

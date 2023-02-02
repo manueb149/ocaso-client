@@ -1,11 +1,34 @@
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, DatePicker, Form, FormInstance, Input, Select, Space } from 'antd';
+import { DefaultOptionType } from 'antd/es/select';
 
 interface Props {
   name: string;
   form: FormInstance;
   next: () => void;
 }
+
+export const DependientesOptions: DefaultOptionType[] = [
+  { value: 'AB', label: 'Abuelo/Abuela' },
+  { value: 'PM', label: 'Padre/Madre' },
+  { value: 'HE', label: 'Hermano/Hermana' },
+  { value: 'HI', label: 'Hijo/Hija' },
+  { value: 'NI', label: 'Nieto/Nieta' },
+  { value: 'TI', label: 'Tío/Tía' },
+  { value: 'SO', label: 'Sobrino/Sobrina' },
+  { value: 'ES', label: 'Esposo/Esposa' },
+  { value: 'YN', label: 'Yerno/Nuera' },
+  { value: 'SU', label: 'Suegro/Suegra' },
+  { value: 'CU', label: 'Cuñado/Cuñada' },
+  { value: 'OTRO', label: 'Otro' },
+];
+
+export const SexoOptions: DefaultOptionType[] = [
+  { value: 'M', label: 'Masculino' },
+  { value: 'F', label: 'Femenino' },
+  { value: 'O', label: 'Otro' },
+];
+
 /**
  * Dependientes form step screen.
  * @return {JSX.Element} Loading screen JSX
@@ -72,14 +95,7 @@ const Dependientes: React.FC<Props> = ({ name, form, next }): JSX.Element => {
                   style={{ width: '140px', padding: '0 4px', marginBottom: '0' }}
                   rules={[{ required: true, message: 'Favor escoger una opción' }]}
                 >
-                  <Select
-                    placeholder="selecciona un género"
-                    options={[
-                      { value: 'M', label: 'Masculino' },
-                      { value: 'F', label: 'Femenino' },
-                      { value: 'O', label: 'Otro' },
-                    ]}
-                  />
+                  <Select placeholder="selecciona un género" options={SexoOptions} />
                 </Form.Item>
 
                 <Form.Item
@@ -89,23 +105,7 @@ const Dependientes: React.FC<Props> = ({ name, form, next }): JSX.Element => {
                   style={{ width: '190px', padding: '0 4px', marginBottom: '0' }}
                   rules={[{ required: true, message: 'Favor llenar el campo' }]}
                 >
-                  <Select
-                    placeholder="selecciona un parentezco"
-                    options={[
-                      { value: 'AB', label: 'Abuelo/Abuela' },
-                      { value: 'PM', label: 'Padre/Madre' },
-                      { value: 'HE', label: 'Hermano/Hermana' },
-                      { value: 'HI', label: 'Hijo/Hija' },
-                      { value: 'NI', label: 'Nieto/Nieta' },
-                      { value: 'TI', label: 'Tío/Tía' },
-                      { value: 'SO', label: 'Sobrino/Sobrina' },
-                      { value: 'ES', label: 'Esposo/Esposa' },
-                      { value: 'YN', label: 'Yerno/Nuera' },
-                      { value: 'SU', label: 'Suegro/Suegra' },
-                      { value: 'CU', label: 'Cuñado/Cuñada' },
-                      { value: 'OTRO', label: 'Otro' },
-                    ]}
-                  />
+                  <Select placeholder="selecciona un parentezco" options={DependientesOptions} />
                 </Form.Item>
 
                 <MinusCircleOutlined onClick={() => remove(name)} />
