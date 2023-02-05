@@ -3,6 +3,7 @@ import { unstable_getServerSession as getServerSession } from 'next-auth';
 import Head from 'next/head';
 import { authOptions } from '../api/auth/[...nextauth]';
 import AppContainer from '../../src/Layout/AppContainer/AppContainer';
+import ContactoDashboard from '../../src/Components/Contactos/ContactoDashboard';
 
 interface Props {}
 
@@ -17,6 +18,7 @@ function Contactos({}: Props): JSX.Element {
         <title>Plan Ocaso | Contactos</title>
       </Head>
       <h3 style={{ textAlign: 'center', padding: '20px' }}>Gestión de Contactos</h3>
+      <ContactoDashboard />
     </>
   );
 }
