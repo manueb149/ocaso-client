@@ -22,7 +22,6 @@ export const planesGet = async (req: any, _res: any, session: Session | null) =>
 };
 
 export const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  console.log(req.url);
   const session = await getServerSession(req, res, authOptions);
   const { response, data, error } = await planesGet(req, res, session);
   if (error) {

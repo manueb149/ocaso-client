@@ -14,6 +14,7 @@ import { IContactoState } from '../../slices/models/interfaces';
 import { guardarContacto, setContacto } from '../../slices/contacto.slice';
 import { Dayjs } from 'dayjs';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
+import { Provincias } from '../../src/data/pages/contactos/crear/Provincias.constants';
 
 /**
  * TODO
@@ -29,6 +30,8 @@ interface Props {}
 function ContactosCrear({}: Props): JSX.Element {
   // State management
   const [empresaChecked, setEmpresaChecked] = useState<boolean>(false);
+  const [pais, setPais] = useState<string | undefined>(undefined);
+  const [municipios, setMunicipios] = useState<{ value: string; label: string }[]>([]);
   const { isMainSectionLoading } = useSelector((state: RootState) => state.layout);
   const dispatch = useDispatch<AppDispatch>();
 
@@ -49,12 +52,18 @@ function ContactosCrear({}: Props): JSX.Element {
   const handleEmpresaChange = (e: CheckboxChangeEvent) => {
     setEmpresaChecked(e.target.checked);
     if (e.target.checked) {
+      form.setFieldValue('eCivil', 'OTRO');
+      form.setFieldValue('sexo', 'O');
+    } else {
       form.setFieldValue('eCivil', undefined);
       form.setFieldValue('sexo', undefined);
       form.setFieldValue('dob', undefined);
-    } else {
-      form.resetFields();
+      // form.resetFields();
     }
+  };
+
+  const handleVendedorChange = (e: CheckboxChangeEvent) => {
+    form.setFieldValue('vendedor', e.target.checked);
   };
 
   useEffect(() => {
@@ -85,7 +94,7 @@ function ContactosCrear({}: Props): JSX.Element {
                 rules={[
                   {
                     required: true,
-                    pattern: new RegExp(/^[ A-Za-z0-9_@./#&+-]*$/),
+                    pattern: new RegExp(/^[A-Za-z0-9_@./#&+-]*$/),
                     message: 'Favor ingresar solo letras',
                   },
                   { required: true, message: 'Favor ingrese un nombre', whitespace: true },
@@ -144,10 +153,6 @@ function ContactosCrear({}: Props): JSX.Element {
               >
                 <Input placeholder="XXX-XXXXXXX-X" />
               </Form.Item>
-
-              {/* <Form.Item name="pasaporte" label="Pasaporte" tooltip="Numero de Pasaporte">
-                <Input />
-              </Form.Item> */}
 
               <Form.Item
                 name="rnc"
@@ -233,17 +238,17 @@ function ContactosCrear({}: Props): JSX.Element {
                 tooltip="Número de celular"
                 hasFeedback
                 rules={[
-                  { max: 12, message: 'No se permiten más dígitos' },
+                  { min: 10, message: 'No se permiten más dígitos' },
                   {
                     required: true,
-                    pattern: new RegExp(/^\d{3}-\d{3}-\d{4}$/),
+                    pattern: new RegExp(/^(\+\d{1,3}[\s-])?\(?\d{3}\)?-\d{3}-\d{4}$/),
                     message: 'Usar formato xxx-xxx-xxxx',
                   },
-                  {
-                    required: true,
-                    pattern: new RegExp(/^[8][0,2,4].*$/),
-                    message: 'Usar solo 809/829/849',
-                  },
+                  // {
+                  //   required: true,
+                  //   pattern: new RegExp(/^(\+\d{1,3}[\s-])?[8][0,2,4].*$/),
+                  //   message: 'Usar solo 809/829/849',
+                  // },
                 ]}
               >
                 <Input placeholder="xxx-xxx-xxxx" />
@@ -257,13 +262,14 @@ function ContactosCrear({}: Props): JSX.Element {
                 rules={[
                   { max: 12, message: 'No se permiten más dígitos' },
                   {
-                    pattern: new RegExp(/^\d{3}-\d{3}-\d{4}$/),
+                    required: false,
+                    pattern: new RegExp(/^(\+\d{1,3}[\s-])?\(?\d{3}\)?-\d{3}-\d{4}$/),
                     message: 'Usar formato xxx-xxx-xxxx',
                   },
-                  {
-                    pattern: new RegExp(/^[8][0,2,4].*$/),
-                    message: 'Usar solo 809/829/849',
-                  },
+                  // {
+                  //   pattern: new RegExp(/^[8][0,2,4].*$/),
+                  //   message: 'Usar solo 809/829/849',
+                  // },
                 ]}
               >
                 <Input placeholder="xxx-xxx-xxxx" />
@@ -271,67 +277,72 @@ function ContactosCrear({}: Props): JSX.Element {
             </div>
             <div className="col-xs-12 col-sm-12 col-md-12 col-lg-6 col-xl-6">
               <Form.Item
-                name={['direccion', 'pais', 'codigo']}
+                name={['direccion', 'pais', 'nombre']}
                 label="País"
+                tooltip="País en el que reside"
                 rules={[{ required: true, message: 'Favor escoger una opción' }]}
               >
                 <Select
                   placeholder="selecciona un pais"
                   allowClear
-                  options={[
-                    { value: 'RD', label: 'República Dominicana' },
-                    { value: 'OTRO', label: 'Otro' },
-                  ]}
+                  options={[{ value: 'REPUBLICA DOMINICANA', label: 'REPUBLICA DOMINICANA' }]}
+                  onChange={(record) => setPais(record)}
                 />
               </Form.Item>
 
-              <Form.Item
-                name={['direccion', 'region', 'codigo']}
-                label="Región"
-                rules={[{ required: true, message: 'Favor escoger una opción' }]}
-              >
-                <Select
-                  placeholder="selecciona una región"
-                  allowClear
-                  options={[
-                    { value: 'N', label: 'Norte(Cibao)' },
-                    { value: 'S', label: 'Sur' },
-                    { value: 'E', label: 'Este' },
-                  ]}
-                />
-              </Form.Item>
+              {pais ? (
+                <Form.Item
+                  name={['direccion', 'region', 'nombre']}
+                  label="Región"
+                  rules={[{ required: true, message: 'Favor escoger una opción' }]}
+                >
+                  <Select
+                    placeholder="selecciona una región"
+                    allowClear
+                    options={[
+                      { value: 'NORTE (CIBAO)', label: 'NORTE (CIBAO)' },
+                      { value: 'SUR', label: 'SUR' },
+                      { value: 'ESTE', label: 'ESTE' },
+                    ]}
+                  />
+                </Form.Item>
+              ) : null}
 
-              <Form.Item
-                name={['direccion', 'provincia', 'codigo']}
-                label="Provincia"
-                rules={[{ required: true, message: 'Favor escoger una opción' }]}
-              >
-                <Select
-                  placeholder="selecciona un provincia"
-                  allowClear
-                  options={[
-                    { value: 'SD', label: 'Santo Domingo' },
-                    { value: 'OTRO', label: 'Otro' },
-                  ]}
-                />
-              </Form.Item>
+              {pais ? (
+                <Form.Item
+                  name={['direccion', 'provincia', 'nombre']}
+                  label="Provincia"
+                  rules={[{ required: true, message: 'Favor escoger una opción' }]}
+                >
+                  <Select
+                    showSearch
+                    allowClear
+                    placeholder="selecciona un provincia"
+                    optionFilterProp="children"
+                    filterOption={(input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase())}
+                    options={[
+                      ...Provincias.map((item) => ({ value: item.codigo, label: item.nombre })),
+                      { value: 'OTRO', label: 'OTRO' },
+                    ]}
+                    onChange={() => {
+                      const value = Provincias.find(
+                        (p) => p.nombre === form.getFieldValue('direccion').provincia.nombre
+                      )?.municipios.map((p) => ({ value: p.codigo, label: p.nombre }));
+                      setMunicipios(value || []);
+                    }}
+                  />
+                </Form.Item>
+              ) : null}
 
-              <Form.Item
-                name={['direccion', 'municipio', 'codigo']}
-                label="Municipio"
-                rules={[{ required: true, message: 'Favor escoger una opción' }]}
-              >
-                <Select
-                  placeholder="selecciona un municipio"
-                  allowClear
-                  options={[
-                    { value: 'DN', label: 'Distrito Nacional' },
-                    { value: 'SDN', label: 'Santo Domingo Norte' },
-                    { value: 'SDE', label: 'Santo Domingo Este' },
-                    { value: 'SDO', label: 'Santo Domingo Oeste' },
-                  ]}
-                />
-              </Form.Item>
+              {municipios.length > 0 ? (
+                <Form.Item
+                  name={['direccion', 'municipio', 'nombre']}
+                  label="Municipio"
+                  rules={[{ required: true, message: 'Favor escoger una opción' }]}
+                >
+                  <Select allowClear placeholder="selecciona un municipio" options={municipios} />
+                </Form.Item>
+              ) : null}
 
               <Form.Item
                 name={['direccion', 'sector']}
@@ -396,8 +407,12 @@ function ContactosCrear({}: Props): JSX.Element {
                 <Input placeholder="11000" />
               </Form.Item>
 
-              <Form.Item valuePropName="checked" name="empresa" style={{ textAlign: 'center', alignItems: 'flex-end' }}>
-                <Checkbox onChange={handleEmpresaChange}>Es una empresa</Checkbox>
+              <Form.Item valuePropName="checked" name="empresa" label="Es una empresa">
+                <Checkbox onChange={handleEmpresaChange} />
+              </Form.Item>
+
+              <Form.Item valuePropName="checked" name="vendedor" label="Es vendedor">
+                <Checkbox onChange={handleVendedorChange} />
               </Form.Item>
             </div>
           </div>
@@ -411,6 +426,7 @@ function ContactosCrear({}: Props): JSX.Element {
                 onClick={() => {
                   form.resetFields();
                   setEmpresaChecked(false);
+                  // setVendedorChecked(false);
                 }}
               >
                 Limpiar

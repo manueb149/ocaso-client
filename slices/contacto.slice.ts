@@ -93,7 +93,13 @@ export const verContactos = createAsyncThunk(
 
 export const guardarContacto = createAsyncThunk(
   'CONTACTO_REDUCERS/GUARDAR_CONTACTO',
-  async ({ form, setEmpresaChecked }: { form: FormInstance; setEmpresaChecked: Dispatch<SetStateAction<boolean>> }) => {
+  async ({
+    form,
+    setEmpresaChecked,
+  }: {
+    form: FormInstance<IContactoState['contacto']>;
+    setEmpresaChecked: Dispatch<SetStateAction<boolean>>;
+  }) => {
     try {
       const res = await fetch(`/api/contactos/crear`, {
         method: 'POST',
@@ -113,7 +119,7 @@ export const guardarContacto = createAsyncThunk(
         }
       } else {
         Notify('success', `Contacto creado`);
-        form.resetFields();
+        // form.resetFields();
         setEmpresaChecked(false);
       }
     } catch (error: any) {}

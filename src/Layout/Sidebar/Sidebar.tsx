@@ -43,7 +43,6 @@ const Sidebar: React.FC = (): JSX.Element => {
     const currentPath = `${event.key}`;
     dispatch(setSelectedModule(event.key as Modules));
     if (currentPath !== router.asPath.slice(1)) {
-      console.log(currentPath, router.asPath.slice(1));
       dispatch(setMainSectionLoading(true));
     }
     router.push(`/${currentPath}`);

@@ -62,6 +62,7 @@ export const verSolicitudes = createAsyncThunk(
           fetch(`/api/auth/logout`).then(() => signOut());
         } else {
           Notify('warn', `Error al cargar las solicitudes`);
+          dispatch(setTableLoading(false));
         }
       } else {
         dispatch(setSolicitudes(data.solicitudes));
