@@ -9,18 +9,12 @@ import { setMainSectionLoading } from '../../slices/layout.slice';
 import { useEffect } from 'react';
 import Loading from '../../src/Components/Loading/Loading';
 import TableContacto from '../../src/Components/Table/TableContacto';
-import { PaginatedResult } from '../../src/models/types.model';
-import { IContacto } from '../../src/models/interfaces.model';
-
-interface Props {
-  initialData?: PaginatedResult<IContacto>;
-}
 
 /**
  * Contactos module
  * @return {JSX.Element} Contactos module JSX
  */
-function ContactosVer({ initialData }: Props): JSX.Element {
+function ContactosVer(): JSX.Element {
   const { isMainSectionLoading } = useSelector((state: RootState) => state.layout);
 
   const dispatch = useDispatch<AppDispatch>();
@@ -40,7 +34,7 @@ function ContactosVer({ initialData }: Props): JSX.Element {
       <Head>
         <title>Plan Ocaso | Ver Contactos</title>
       </Head>
-      <h3 style={{ textAlign: 'center', padding: '20px' }}>Listado de Contactos</h3>
+      <h3 style={{ textAlign: 'center', padding: '20px 20px 10px 20px' }}>Listado de Contactos</h3>
       <section className="ver-contactos">
         <TableContacto />
       </section>

@@ -53,7 +53,7 @@ const Contratante: React.FC<Props> = ({ name, form, planes = [], next }): JSX.El
       direccion: {
         calle: selectedContacto?.direccion?.calle,
         sector: selectedContacto?.direccion?.sector,
-        municipio: { codigo: selectedContacto?.direccion?.municipio.codigo },
+        municipio: { nombre: selectedContacto?.direccion?.municipio?.nombre },
       },
     });
     form.validateFields();
@@ -69,7 +69,7 @@ const Contratante: React.FC<Props> = ({ name, form, planes = [], next }): JSX.El
       direccion: {
         calle: '',
         sector: '',
-        municipio: { codigo: '' },
+        municipio: { nombre: '' },
       },
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -92,8 +92,8 @@ const Contratante: React.FC<Props> = ({ name, form, planes = [], next }): JSX.El
             <Input placeholder="" value={selectedContacto?.direccion?.sector || ''} required disabled />
           </Form.Item>
 
-          <Form.Item name={['direccion', 'municipio', 'codigo']} label="Municipio">
-            <Input placeholder="" value={selectedContacto?.direccion?.municipio.codigo || ''} required disabled />
+          <Form.Item name={['direccion', 'municipio', 'nombre']} label="Municipio">
+            <Input placeholder="" value={selectedContacto?.direccion?.municipio?.nombre || ''} required disabled />
           </Form.Item>
 
           <Form.Item name="cel" label="Celular">

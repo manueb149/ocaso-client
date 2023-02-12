@@ -14,41 +14,7 @@ export interface ILayoutState {
 }
 
 export interface IContactoState {
-  contacto: {
-    cedula: string;
-    rnc?: number;
-    nombres: string;
-    apellidos?: string;
-    dob?: Dayjs | string | null;
-    sexo?: string;
-    eCivil?: string;
-    tel?: string;
-    cel: string;
-    email?: string;
-    empresa?: boolean;
-    referencia?: string;
-    direccion: {
-      calle: String;
-      sector: String;
-      zip?: String;
-      municipio: {
-        codigo: String;
-        nombre?: String;
-      };
-      provincia: {
-        codigo: String;
-        nombre?: String;
-      };
-      region: {
-        codigo: String;
-        nombre?: String;
-      };
-      pais: {
-        codigo: String;
-        nombre?: String;
-      };
-    };
-  };
+  contacto: IContacto;
   saving: boolean;
   contactos: PaginatedResult<IContacto>;
   suggestions: IContacto[];

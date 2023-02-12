@@ -47,37 +47,41 @@ export interface IResponsable {
 
 // CONTACTO
 export interface IContacto {
+  id?: string;
   cedula: string;
   rnc?: number;
   nombres: string;
   apellidos: string;
-  direccion: IDireccion;
-  dob: string;
-  sexo: string;
+  dob: Date | Dayjs | string | null | undefined;
+  sexo: string | undefined;
   eCivil?: string;
   tel?: string;
   cel: string;
   email?: string;
+  empresa?: boolean;
+  vendedor?: boolean;
+  direccion: IDireccion;
 }
 
 export interface IDireccion {
-  calle: string;
-  sector: string;
+  calle?: string;
+  sector?: string;
+  referencia?: string;
   zip?: string;
-  municipio: {
-    codigo: string;
+  municipio?: {
+    codigo?: string;
     nombre?: string;
   };
-  provincia: {
-    codigo: string;
+  provincia?: {
+    codigo?: string;
     nombre?: string;
   };
-  region: {
-    codigo: string;
+  region?: {
+    codigo?: string;
     nombre?: string;
   };
-  pais: {
-    codigo: string;
+  pais?: {
+    codigo?: string;
     nombre?: string;
   };
 }

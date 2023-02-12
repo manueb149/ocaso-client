@@ -14,33 +14,19 @@ import { PaginatedResult } from '../src/models/types.model';
 const initialState: IContactoState = {
   contacto: {
     cedula: '',
-    rnc: 0,
+    rnc: undefined,
     nombres: '',
     apellidos: '',
-    dob: null,
-    sexo: '',
+    dob: undefined,
+    sexo: undefined,
     tel: '',
     cel: '',
     email: '',
+    empresa: false,
+    vendedor: false,
     direccion: {
-      calle: '',
-      sector: '',
-      zip: '',
-      municipio: {
-        codigo: '',
-        nombre: '',
-      },
-      provincia: {
-        codigo: '',
-        nombre: '',
-      },
-      region: {
-        codigo: '',
-        nombre: '',
-      },
       pais: {
-        codigo: '',
-        nombre: '',
+        nombre: undefined,
       },
     },
   },
@@ -85,27 +71,30 @@ export const verContactos = createAsyncThunk(
         dispatch(setTableParams({ pagination }));
         dispatch(setTableLoading(false));
       }
-    } catch (error: any) {
-      console.log('error', error);
-    }
+    } catch (error: any) {}
   }
 );
 
 export const guardarContacto = createAsyncThunk(
   'CONTACTO_REDUCERS/GUARDAR_CONTACTO',
-  async ({
-    form,
-    setEmpresaChecked,
-  }: {
-    form: FormInstance<IContactoState['contacto']>;
-    setEmpresaChecked: Dispatch<SetStateAction<boolean>>;
-  }) => {
+  async (
+    {
+      contacto,
+      form,
+      setEmpresaChecked,
+      setVendedorChecked,
+    }: {
+      contacto: IContacto;
+      form: FormInstance<IContacto>;
+      setEmpresaChecked: Dispatch<SetStateAction<boolean>>;
+      setVendedorChecked: Dispatch<SetStateAction<boolean>>;
+    },
+    { dispatch }
+  ) => {
     try {
       const res = await fetch(`/api/contactos/crear`, {
         method: 'POST',
-        body: JSON.stringify({
-          ...form.getFieldsValue(),
-        }),
+        body: JSON.stringify(contacto),
         headers: {
           'Content-Type': 'application/json',
         },
@@ -119,8 +108,39 @@ export const guardarContacto = createAsyncThunk(
         }
       } else {
         Notify('success', `Contacto creado`);
-        // form.resetFields();
+        dispatch(clearContacto());
+        form.resetFields();
+        setTimeout(() => {
+          form.resetFields();
+        }, 500);
         setEmpresaChecked(false);
+        setVendedorChecked(false);
+      }
+    } catch (error: any) {}
+  }
+);
+
+export const eliminarContacto = createAsyncThunk(
+  'CONTACTO_REDUCERS/ELIMINAR_CONTACTO',
+  async ({ id, fetchData }: { id: string; fetchData: () => void }) => {
+    try {
+      const res = await fetch(`/api/contactos/eliminar`, {
+        method: 'DELETE',
+        body: JSON.stringify({ id }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        if (res.status === 401) {
+          fetch(`/api/auth/logout`).then(() => signOut());
+        } else {
+          Notify('warn', `${data?.data?.message}`);
+        }
+      } else {
+        Notify('success', `${data?.data?.message}`);
+        fetchData();
       }
     } catch (error: any) {}
   }
@@ -169,8 +189,9 @@ const contactoSlice = createSlice({
   name: 'contacto',
   initialState: initialState,
   reducers: {
-    setContacto: (state, action: PayloadAction<IContactoState['contacto']>) => {
+    setContacto: (state, action: PayloadAction<IContacto>) => {
       state.contacto = { ...state.contacto, ...action.payload };
+      localStorage.setItem('contactoForm', JSON.stringify({ ...state.contacto, ...action.payload }));
     },
     setContactos: (state, action: PayloadAction<PaginatedResult<IContacto>>) => {
       state.contactos = action.payload;
@@ -181,34 +202,24 @@ const contactoSlice = createSlice({
     clearContacto: (state) => {
       state.contacto = {
         cedula: '',
+        rnc: undefined,
         nombres: '',
         apellidos: '',
-        dob: null,
-        sexo: '',
+        dob: undefined,
+        sexo: undefined,
+        eCivil: undefined,
         tel: '',
         cel: '',
         email: '',
+        empresa: false,
+        vendedor: false,
         direccion: {
-          calle: '',
-          sector: '',
-          municipio: {
-            codigo: '',
-            nombre: '',
-          },
-          provincia: {
-            codigo: '',
-            nombre: '',
-          },
-          region: {
-            codigo: '',
-            nombre: '',
-          },
           pais: {
-            codigo: '',
-            nombre: '',
+            nombre: undefined,
           },
         },
       };
+      localStorage.removeItem('contactoForm');
     },
     setSuggestions: (state, action: PayloadAction<IContacto[]>) => {
       state.suggestions = action.payload;

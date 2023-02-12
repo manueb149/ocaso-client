@@ -1,9 +1,9 @@
-import { Button, Space, Table as TableAnt, Tooltip } from 'antd';
+import { Button, Popconfirm, Space, Table as TableAnt, Tooltip } from 'antd';
 import type { ColumnsType } from 'antd/es/table/interface';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../../config/configureStore';
-import { verContactos } from '../../../slices/contacto.slice';
+import { eliminarContacto, verContactos } from '../../../slices/contacto.slice';
 import { ITableParams } from '../../../slices/models/interfaces';
 import { IContacto } from '../../models/interfaces.model';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -19,6 +19,10 @@ const TableContacto: React.FC<Props> = () => {
 
   const fetchData = (params?: ITableParams) => {
     dispatch(verContactos(params));
+  };
+
+  const handleDeleteContacto = (contacto: IContacto) => {
+    dispatch(eliminarContacto({ id: contacto.id!, fetchData }));
   };
 
   const handleTableChange = (
@@ -86,7 +90,7 @@ const TableContacto: React.FC<Props> = () => {
       render: (record) => (
         <div>
           <Space style={{ width: '100%', justifyContent: 'center' }}>
-            <Tooltip title="Ver">
+            <Tooltip title="Ver" placement="bottom">
               <Button
                 shape="circle"
                 style={{ margin: 0, padding: '0' }}
@@ -97,15 +101,24 @@ const TableContacto: React.FC<Props> = () => {
                 <FontAwesomeIcon icon={faEye} />
               </Button>
             </Tooltip>
-            <Tooltip title="Editar">
+            <Tooltip title="Editar" placement="bottom">
               <Button shape="circle" style={{ margin: 0, padding: '0' }}>
                 <FontAwesomeIcon icon={faPenToSquare} />
               </Button>
             </Tooltip>
-            <Tooltip title="Eliminar">
-              <Button shape="circle" style={{ margin: 0, padding: '0' }} danger>
-                <FontAwesomeIcon icon={faTrash} />
-              </Button>
+            <Tooltip title="Eliminar" placement="bottom">
+              <Popconfirm
+                placement="topLeft"
+                title="Eliminar contacto"
+                description={<p>Seguro que desea eliminar este contacto?</p>}
+                onConfirm={() => handleDeleteContacto(record as IContacto)}
+                okText="Si"
+                cancelText="No"
+              >
+                <Button shape="circle" style={{ margin: 0, padding: '0' }} danger>
+                  <FontAwesomeIcon icon={faTrash} />
+                </Button>
+              </Popconfirm>
             </Tooltip>
           </Space>
         </div>
@@ -127,6 +140,7 @@ const TableContacto: React.FC<Props> = () => {
         pagination={params.pagination}
         loading={loading}
         onChange={handleTableChange}
+        scroll={{ y: 520, x: 1000 }}
       />
     </>
   );
