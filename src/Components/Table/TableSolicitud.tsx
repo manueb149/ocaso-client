@@ -101,6 +101,8 @@ const TableSolicitud: React.FC<Props> = () => {
         pagination={params.pagination}
         loading={loading}
         onChange={handleTableChange}
+        scroll={{ y: 520, x: 1000 }}
+        size="small"
       />
     </>
   );
