@@ -37,7 +37,6 @@ const NewPasswordModal = () => {
       .catch(() => {
         Notify('warn', 'Favor completar los campos correctamente', 5000);
       });
-    // handleClose(true)
   };
 
   useEffect(() => {

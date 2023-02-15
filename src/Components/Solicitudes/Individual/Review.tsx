@@ -13,6 +13,7 @@ interface ContratanteInfo {
   desde: Dayjs | string;
   plan: string;
   prima: string;
+  pago: string;
   valor: number;
   vendedor: string;
 }
@@ -65,31 +66,52 @@ const Review: React.FC<Props> = ({ contratanteInfo, dependientesInfo }) => {
 
   return (
     <>
-      <Descriptions title="User Info" layout="horizontal" bordered column={2}>
+      <Descriptions title="Datos del Cliente" layout="horizontal" bordered column={2} size="small">
         <Descriptions.Item label="Contratante">
           {nombres} {apellidos}
         </Descriptions.Item>
-        <Descriptions.Item label="Cedula">{cedula}</Descriptions.Item>
-        <Descriptions.Item label="Direccion">
-          {direccion?.calle}, {direccion?.sector}
+        <Descriptions.Item label="Cédula" span={1}>
+          {cedula}
         </Descriptions.Item>
-        <Descriptions.Item label="Municipio">{direccion?.municipio?.nombre}</Descriptions.Item>
-        <Descriptions.Item label="Telefono">{tel}</Descriptions.Item>
-        <Descriptions.Item label="Correo Elec.">{email}</Descriptions.Item>
+        <Descriptions.Item label="Dirección" span={1}>
+          {direccion?.calle ?? ''}, {direccion?.sector ?? ''}, {direccion?.municipio?.nombre ?? ''}
+        </Descriptions.Item>
+        <Descriptions.Item label="País" span={1}>
+          {direccion?.pais?.nombre}
+        </Descriptions.Item>
+        <Descriptions.Item label="Telefono" span={1}>
+          {tel}
+        </Descriptions.Item>
+        <Descriptions.Item label="Correo Electrónico" span={1}>
+          {email}
+        </Descriptions.Item>
       </Descriptions>
-      <Descriptions title="Prima/Plan" layout="vertical" bordered column={3} style={{ marginTop: '20px' }}>
+      <Descriptions title="Plan/Prima" layout="vertical" bordered column={4} style={{ marginTop: '20px' }} size="small">
         <Descriptions.Item label="Plan">{contratanteInfo.plan}</Descriptions.Item>
-        <Descriptions.Item label="Prima">{contratanteInfo.prima}</Descriptions.Item>
-        <Descriptions.Item label="Valor Asegurado">{contratanteInfo.valor}</Descriptions.Item>
+        <Descriptions.Item label="Valor Asegurado">{Number(contratanteInfo.valor).toLocaleString()}</Descriptions.Item>
+        <Descriptions.Item label="Forma de pago">{contratanteInfo.pago}</Descriptions.Item>
       </Descriptions>
       <Descriptions
-        title="Detalle de Pendendientes"
+        title="Detalle de Dependientes"
         layout="vertical"
         bordered
-        column={3}
+        column={1}
         style={{ marginTop: '20px' }}
       ></Descriptions>
       <TableAnt columns={columns} dataSource={dependientesInfo} pagination={false} />
+      <Descriptions
+        title="Pago"
+        layout="horizontal"
+        bordered
+        column={1}
+        style={{ marginTop: '20px', width: '400px' }}
+        size="small"
+      >
+        <Descriptions.Item label="Prima">0</Descriptions.Item>
+        <Descriptions.Item label="Extra Prima">0</Descriptions.Item>
+        <Descriptions.Item label="ITBS">0</Descriptions.Item>
+        <Descriptions.Item label={<b>TOTAL</b>}>0</Descriptions.Item>
+      </Descriptions>
     </>
   );
 };

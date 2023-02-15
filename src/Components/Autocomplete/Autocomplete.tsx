@@ -21,6 +21,21 @@ const Autocomplete: React.FC<Props> = ({ type = 'Contratante', disabled = false 
   const { suggestions } = useSelector((state: RootState) => state.contacto);
   const debouncedValue = useDebounce<string>(valueTrigger, 300);
 
+  const options = () => {
+    if (type === 'Vendedor') {
+      return suggestions
+        .filter((contacto) => contacto.vendedor)
+        .map((contacto) => ({
+          value: contacto.cedula,
+          label: `(${contacto.cedula}) ${contacto.nombres} ${contacto.apellidos || ''}`,
+        }));
+    }
+    return suggestions.map((contacto) => ({
+      value: contacto.cedula,
+      label: `(${contacto.cedula}) ${contacto.nombres} ${contacto.apellidos || ''}`,
+    }));
+  };
+
   const dispatch = useDispatch<AppDispatch>();
 
   const onSearch = (searchText: string) => {
@@ -64,10 +79,7 @@ const Autocomplete: React.FC<Props> = ({ type = 'Contratante', disabled = false 
         filterSort={(optionA, optionB) =>
           (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
         }
-        options={suggestions.map((contacto) => ({
-          value: contacto.cedula,
-          label: `(${contacto.cedula}) ${contacto.nombres} ${contacto.apellidos || ''}`,
-        }))}
+        options={options()}
         onSearch={onSearch}
         onSelect={onSelect}
         disabled={disabled}

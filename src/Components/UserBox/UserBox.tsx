@@ -6,7 +6,7 @@ import { signOut, useSession } from 'next-auth/react';
 import styles from './UserBox.module.scss';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../../config/configureStore';
-import { setToggleNewPasswordModal } from '../../../slices/layout.slice';
+import { setToggleAlertsModal, setToggleConfigModal, setToggleNewPasswordModal } from '../../../slices/layout.slice';
 
 /**
  * UserBox section for user options.
@@ -25,7 +25,12 @@ const UserBox: React.FC = (): JSX.Element => {
       <h6 style={{ marginBottom: '20px', fontWeight: '800', textAlign: 'center' }}>{data?.user?.name!}</h6>
       <h6>Actividades</h6>
       <div className={styles['alerts']}>
-        <span className="pointer" onClick={() => {}}>
+        <span
+          className="pointer"
+          onClick={() => {
+            dispatch(setToggleAlertsModal(true));
+          }}
+        >
           <FontAwesomeIcon style={{ marginRight: '5px' }} icon={faExclamationCircle} />
           Alertas
         </span>
@@ -33,7 +38,12 @@ const UserBox: React.FC = (): JSX.Element => {
       </div>
       <h6 style={{ marginTop: '15px' }}>Mi Cuenta</h6>
       <div className={styles['account']}>
-        <div className="pointer">
+        <div
+          className="pointer"
+          onClick={() => {
+            dispatch(setToggleConfigModal(true));
+          }}
+        >
           <FontAwesomeIcon style={{ marginRight: '5px' }} icon={faCog} />
           Configurar
         </div>

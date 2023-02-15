@@ -81,6 +81,25 @@ body {
     margin-top: 0px;
   }
 
+  .ant-table-wrapper {
+    overflow: hidden;
+    border-radius: 6px;
+    box-shadow: 0px 0px 0px 2px rgb(0 0 0 / 10%);
+    margin-top: 20px;
+
+    .ant-table {
+      border-radius: 0;
+    }
+
+    .ant-table-pagination.ant-pagination {
+      margin: 8px 10px;
+    }
+  }
+
+  .ant-modal .ant-modal-close-x {
+    line-height: 0px;
+  }
+
   .noselect {
     -webkit-touch-callout: none;
     /* iOS Safari */
@@ -111,7 +130,7 @@ a {
 }
 
 *::-webkit-scrollbar {
-  width: 16px;
+  width: 14px;
 }
 
 * {
