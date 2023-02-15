@@ -39,6 +39,7 @@ const initialState: IContactoState = {
     totalResults: 0,
   },
   suggestions: [],
+  viewContacto: null,
   selectedContacto: null,
   selectedIntermediario: null,
 };
@@ -224,6 +225,9 @@ const contactoSlice = createSlice({
     setSuggestions: (state, action: PayloadAction<IContacto[]>) => {
       state.suggestions = action.payload;
     },
+    setViewContacto: (state, action: PayloadAction<IContacto | null>) => {
+      state.viewContacto = action.payload;
+    },
     setSelectedContacto: (state, action: PayloadAction<IContacto | null>) => {
       state.selectedContacto = action.payload;
     },
@@ -242,6 +246,7 @@ export const {
   setSaving,
   setContactos,
   setSuggestions,
+  setViewContacto,
   setSelectedContacto,
   setSelectedIntermediario,
 } = contactoSlice.actions;

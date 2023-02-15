@@ -7,7 +7,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getServerSession(req, res, authOptions);
   try {
     const { id } = req.body;
-    const response = await fetch(`${BASE_URL}/contactos/${id}`, {
+    const response = await fetch(`${BASE_URL}/solicitudes/${id}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',

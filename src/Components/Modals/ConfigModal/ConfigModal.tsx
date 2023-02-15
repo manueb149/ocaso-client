@@ -4,7 +4,7 @@ import { AppDispatch, RootState } from '../../../../config/configureStore';
 import { useDispatch, useSelector } from 'react-redux';
 
 const ConfigModal: React.FC<{}> = () => {
-  const { isAlertsModalOpen } = useSelector((state: RootState) => state.layout);
+  const { isConfigModalOpen } = useSelector((state: RootState) => state.layout);
   const dispatch = useDispatch<AppDispatch>();
 
   const handleClose = (status: boolean) => {
@@ -13,7 +13,6 @@ const ConfigModal: React.FC<{}> = () => {
 
   const handleClear = (status: boolean) => {
     dispatch(setToggleConfigModal(status));
-    // dispatch(clearAlerts());
   };
 
   return (
@@ -22,7 +21,7 @@ const ConfigModal: React.FC<{}> = () => {
         destroyOnClose
         centered
         title="Configuracion de usuario"
-        open={isAlertsModalOpen}
+        open={isConfigModalOpen}
         onOk={() => handleClear(false)}
         onCancel={() => handleClose(false)}
         bodyStyle={{
@@ -36,7 +35,7 @@ const ConfigModal: React.FC<{}> = () => {
             Cerrar
           </Button>,
           <Button key="submit" type="primary" onClick={() => handleClear(false)}>
-            Limpiar
+            Guardar
           </Button>,
         ]}
       ></Modal>

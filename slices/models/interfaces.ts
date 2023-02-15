@@ -11,6 +11,7 @@ export interface ILayoutState {
   isAlertsModalOpen: boolean;
   isConfigModalOpen: boolean;
   isNewPasswordModalOpen: boolean;
+  isViewContactoModalOpen: boolean;
 }
 
 export interface IContactoState {
@@ -18,6 +19,7 @@ export interface IContactoState {
   saving: boolean;
   contactos: PaginatedResult<IContacto>;
   suggestions: IContacto[];
+  viewContacto: IContacto | null;
   selectedContacto: IContacto | null;
   selectedIntermediario: IContacto | null;
   pagination?: TablePaginationConfig;

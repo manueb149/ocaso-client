@@ -26,6 +26,7 @@ export interface ISolicitud {
 export type Plan = {
   nombre: string;
   valor: number;
+  pago: string;
   prima: number;
 };
 
@@ -61,6 +62,7 @@ export interface IContacto {
   empresa?: boolean;
   vendedor?: boolean;
   direccion: IDireccion;
+  status?: boolean;
 }
 
 export interface IDireccion {

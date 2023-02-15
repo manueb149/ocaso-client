@@ -81,21 +81,22 @@ const Individual: React.FC<Props> = ({ planes }) => {
                   onClick={() => {
                     const solicitud: ISolicitud = {
                       ...(formContratante.getFieldValue('desde') && {
-                        desde: (formContratante.getFieldValue('desde') as Dayjs).toISOString(),
+                        desde: (formContratante.getFieldValue('desde') as Dayjs).format('DD/MM/YYYY'),
                       }),
                       ...(formContratante.getFieldValue('hasta') && {
-                        hasta: (formContratante.getFieldValue('hasta') as Dayjs).toISOString(),
+                        hasta: (formContratante.getFieldValue('hasta') as Dayjs).format('DD/MM/YYYY'),
                       }),
                       inscritos:
                         formDependientes.getFieldValue('inscritos')?.map((inscrito: IDependientes) => ({
                           ...inscrito,
-                          dob: (inscrito.dob as Dayjs).toISOString(),
+                          dob: (inscrito.dob as Dayjs).format('DD/MM/YYYY'),
                         })) || [],
                       contratante: formContratante.getFieldValue('contratante'),
                       vendedor: formContratante.getFieldValue('vendedor'),
                       plan: {
                         nombre: formContratante.getFieldValue('plan'),
                         valor: formContratante.getFieldValue('valor'),
+                        pago: formContratante.getFieldValue('pago'),
                         prima: formContratante.getFieldValue('prima'),
                       },
                       vigencia: (formContratante.getFieldValue('hasta') as Dayjs)

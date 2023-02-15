@@ -24,7 +24,7 @@ interface Props {
  */
 function SolicitudesCrear({ planes }: Props): JSX.Element {
   // State management
-  const [plan, setPlan] = useState<string>('PLAN INDIVIDUAL');
+  const [plan, setPlan] = useState<string>('PLAN INDIVIDUAL/FAMILIAR');
   const { isMainSectionLoading } = useSelector((state: RootState) => state.layout);
   const dispatch = useDispatch<AppDispatch>();
 
@@ -51,11 +51,11 @@ function SolicitudesCrear({ planes }: Props): JSX.Element {
             onChange={(value) => {
               setPlan(value as string);
             }}
-            options={['PLAN INDIVIDUAL', 'PLAN COLECTIVO']}
+            options={['PLAN INDIVIDUAL/FAMILIAR', 'PLAN EMPRESARIAL/COLECTIVO']}
             onResize={undefined}
             onResizeCapture={undefined}
           />
-          {plan === 'PLAN INDIVIDUAL' ? <Individual planes={planes} /> : <Colectivo />}
+          {plan === 'PLAN INDIVIDUAL/FAMILIAR' ? <Individual planes={planes} /> : <Colectivo />}
         </Space>
       </section>
     </>

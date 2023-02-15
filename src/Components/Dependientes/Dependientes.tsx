@@ -85,7 +85,7 @@ const Dependientes: React.FC<Props> = ({ name, form, next }): JSX.Element => {
                   style={{ width: '150px', padding: '0 4px', marginBottom: '0' }}
                   rules={[{ required: true, message: 'Favor ingresar una fecha' }]}
                 >
-                  <DatePicker placeholder="YYYY-MM-DD" allowClear />
+                  <DatePicker placeholder="DD/MM/YYYY" format="DD/MM/YYYY" allowClear />
                 </Form.Item>
 
                 <Form.Item

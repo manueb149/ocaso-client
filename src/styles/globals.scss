@@ -96,6 +96,10 @@ body {
     }
   }
 
+  .ant-modal .ant-modal-close-x {
+    line-height: 0px;
+  }
+
   .noselect {
     -webkit-touch-callout: none;
     /* iOS Safari */

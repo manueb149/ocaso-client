@@ -22,6 +22,7 @@ const Contratante: React.FC<Props> = ({ name, form, planes = [], next }): JSX.El
   const [desde, setFechaInicio] = useState<Dayjs | null>(null);
   const [hasta, setFechaTermino] = useState<Dayjs | null>(null);
   const [montos, setMontos] = useState<number[]>([]);
+  const [pago, setPago] = useState<string | null>(null);
   const [prima, setPrima] = useState<number | null>(null);
   const { selectedContacto } = useSelector((state: RootState) => state.contacto);
 
@@ -33,8 +34,13 @@ const Contratante: React.FC<Props> = ({ name, form, planes = [], next }): JSX.El
         form.setFieldValue('desde', date as Dayjs);
         form.setFieldValue('hasta', (date as Dayjs).add(1, 'y'));
       } else {
-        setFechaTermino(date as Dayjs);
-        form.setFieldValue('hasta', (date as Dayjs).add(1, 'y'));
+        if (desde && date?.isAfter(desde.subtract(1, 'day'))) {
+          setFechaTermino(date as Dayjs);
+          form.setFieldValue('hasta', date as Dayjs);
+        } else {
+          setFechaTermino(null);
+          form.setFieldValue('hasta', undefined);
+        }
       }
     } else {
       type === 'inicio' ? setFechaInicio(null) : setFechaTermino(null);
@@ -149,7 +155,7 @@ const Contratante: React.FC<Props> = ({ name, form, planes = [], next }): JSX.El
             >
               <Select
                 allowClear
-                options={montos?.map((item) => ({ value: item, label: item }))}
+                options={montos?.map((item) => ({ value: item, label: Number(item).toLocaleString() }))}
                 onChange={(valor) => {
                   form.setFieldValue('prima', null);
                   if (valor) {
@@ -166,7 +172,35 @@ const Contratante: React.FC<Props> = ({ name, form, planes = [], next }): JSX.El
             </Form.Item>
           ) : null}
 
-          {!!form.getFieldValue('valor') ? (
+          {!!form.getFieldValue('plan') ? (
+            <Form.Item
+              name="pago"
+              label="Forma de pago"
+              rules={[
+                {
+                  required: true,
+                  message: `Seleccione un valor`,
+                },
+              ]}
+            >
+              <Select
+                allowClear
+                options={[
+                  { value: 'ANUAL', label: 'ANUAL' },
+                  { value: 'SEMESTRAL', label: 'SEMESTRAL' },
+                  { value: 'TRIMESTRAL', label: 'TRIMESTRAL' },
+                  { value: 'MENSUAL', label: 'MENSUAL' },
+                ]}
+                onChange={(valor) => {
+                  form.setFieldValue('pago', valor);
+                  setPago(valor);
+                }}
+                placeholder="Elija una forma de pago"
+              />
+            </Form.Item>
+          ) : null}
+
+          {pago ? (
             <Form.Item name="prima" label="Prima">
               <Input placeholder={prima?.toLocaleString() || ''} value={prima?.toLocaleString() || 0} disabled />
             </Form.Item>
@@ -188,7 +222,7 @@ const Contratante: React.FC<Props> = ({ name, form, planes = [], next }): JSX.El
               }}
               value={desde}
               format="DD/MM/YYYY"
-              placeholder="Inicio"
+              placeholder="DD/MM/YYYY"
             />
           </Form.Item>
           <Form.Item
@@ -207,7 +241,7 @@ const Contratante: React.FC<Props> = ({ name, form, planes = [], next }): JSX.El
               }}
               value={hasta}
               format="DD/MM/YYYY"
-              placeholder="Término"
+              placeholder="DD/MM/YYYY"
             />
           </Form.Item>
         </div>

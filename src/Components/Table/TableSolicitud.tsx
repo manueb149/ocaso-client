@@ -1,4 +1,4 @@
-import { Table as TableAnt } from 'antd';
+import { Space, Table as TableAnt } from 'antd';
 import type { ColumnsType } from 'antd/es/table/interface';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -6,6 +6,8 @@ import { AppDispatch, RootState } from '../../../config/configureStore';
 import { verSolicitudes } from '../../../slices/solicitud.slice';
 import { ITableParams } from '../../../slices/models/interfaces';
 import { ISolicitud } from '../../models/interfaces.model';
+import ActionButton from '../ActionButton/ActionButton';
+import { faEye, faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 interface Props {}
 
@@ -60,6 +62,28 @@ const TableSolicitud: React.FC<Props> = () => {
       dataIndex: 'hasta',
       key: 'hasta',
       render: (text) => <>{new Date(text).toLocaleDateString()}</>,
+    },
+    {
+      title: 'Acciones',
+      width: '10%',
+      align: 'center',
+      render: (record) => (
+        <div>
+          <Space style={{ width: '100%', justifyContent: 'center' }}>
+            <ActionButton table="solicitudes" action="Ver" record={record} icon={faEye} />
+            <ActionButton table="solicitudes" action="Editar" record={record} icon={faPenToSquare} />
+            <ActionButton
+              table="solicitudes"
+              action="Eliminar"
+              record={record}
+              title="Eliminar contacto"
+              icon={faTrash}
+              confirmModal
+              danger
+            />
+          </Space>
+        </div>
+      ),
     },
   ];
 
