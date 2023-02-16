@@ -70,7 +70,13 @@ export const verContactos = createAsyncThunk(
           Notify('warn', `Error al cargar los contactos`);
         }
       } else {
-        dispatch(setContactos(data.contactos));
+        const activeContactos = data.contactos.results.filter((contacto) => contacto.status);
+        dispatch(
+          setContactos({
+            ...data.contactos,
+            results: activeContactos,
+          })
+        );
         dispatch(setTableParams({ pagination }));
         dispatch(setTableLoading(false));
       }
