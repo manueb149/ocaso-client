@@ -2,11 +2,12 @@ import { Button, Popconfirm, Tooltip } from 'antd';
 import { IContacto } from '../../models/interfaces.model';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../../config/configureStore';
-import { eliminarContacto, setViewContacto, verContactos } from '../../../slices/contacto.slice';
+import { eliminarContacto, setEditContacto, setViewContacto, verContactos } from '../../../slices/contacto.slice';
 import { ITableParams } from '../../../slices/models/interfaces';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconDefinition } from '@fortawesome/free-solid-svg-icons';
 import { setViewContactoModal } from '../../../slices/layout.slice';
+import { useRouter } from 'next/router';
 
 interface Props extends React.HTMLProps<HTMLElement> {
   record: IContacto;
@@ -19,6 +20,7 @@ interface Props extends React.HTMLProps<HTMLElement> {
 }
 
 const ActionButton = (props: Props) => {
+  const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
 
   const fetchData = (params?: ITableParams) => {
@@ -33,6 +35,8 @@ const ActionButton = (props: Props) => {
           dispatch(setViewContactoModal(true));
           break;
         case 'Editar':
+          dispatch(setEditContacto(contacto));
+          router.push('/contactos/editar');
           break;
         case 'Eliminar':
           dispatch(eliminarContacto({ id: contacto.id!, fetchData }));

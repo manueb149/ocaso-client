@@ -8,76 +8,103 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { setMainSectionLoading } from '../../slices/layout.slice';
 import Loading from '../../src/Components/Loading/Loading';
-import { Button, Form, Input, Select, DatePicker, Space, Segmented } from 'antd';
+import { Button, Form, Input, Select, DatePicker, Space, Result, Segmented } from 'antd';
 import { formItemLayout, tailFormItemLayout } from '../../src/data/pages/contactos/crear/formData';
 import { IContactoState } from '../../slices/models/interfaces';
-import { clearContacto, guardarContacto, setContacto } from '../../slices/contacto.slice';
+import { editarContacto, setEditContacto } from '../../slices/contacto.slice';
 import dayjs, { Dayjs } from 'dayjs';
 import { Provincias } from '../../src/data/pages/contactos/crear/Provincias.constants';
+import { useRouter } from 'next/router';
 
 interface Props {}
 /**
  * Contactos module
  * @return {JSX.Element} Contactos module JSX
  */
-function ContactosCrear({}: Props): JSX.Element {
-  // Form management
-  const [form] = Form.useForm<IContactoState['contacto']>();
-
-  // State management
+function ContactosEditar({}: Props): JSX.Element {
   const { isMainSectionLoading } = useSelector((state: RootState) => state.layout);
-  const { contacto } = useSelector((state: RootState) => state.contacto);
-  const [empresaChecked, setEmpresaChecked] = useState<boolean>(contacto.empresa ?? false);
-  const [, setVendedorChecked] = useState<boolean>(contacto.vendedor ?? false);
-  const [tipoContacto, setTipoContacto] = useState<string>(
-    contacto.empresa ? 'EMPRESA' : contacto.vendedor ? 'VENDEDOR' : 'CLIENTE'
-  );
-  const [pais, setPais] = useState<string | undefined>(contacto?.direccion?.pais?.nombre ?? undefined);
+  const { editContacto } = useSelector((state: RootState) => state.contacto);
+
+  const [empresaChecked, setEmpresaChecked] = useState<boolean>(editContacto?.empresa ?? false);
+  // eslint-disable-next-line no-unused-vars
+  const [_, setVendedorChecked] = useState<boolean>(editContacto?.vendedor ?? false);
+  const [pais, setPais] = useState<string | undefined>(editContacto?.direccion?.pais?.nombre ?? undefined);
   const [municipios, setMunicipios] = useState<{ value: string; label: string }[]>(
-    Provincias.find((p) => p.nombre === contacto?.direccion?.provincia?.nombre)?.municipios.map((p) => ({
+    Provincias.find((p) => p.nombre === editContacto?.direccion?.provincia?.nombre)?.municipios.map((p) => ({
       value: p.codigo,
       label: p.nombre,
     })) ?? []
   );
-  const [cedula, setCedula] = useState<string>('');
-  const [cel, setCel] = useState<string>('');
-  const [tel, setTel] = useState<string>('');
+  const [tipoContacto, setTipoContacto] = useState<string>(
+    editContacto?.empresa ? 'EMPRESA' : editContacto?.vendedor ? 'VENDEDOR' : 'CLIENTE'
+  );
 
+  const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
 
-  const onFinish = (contacto: IContactoState['contacto']) => {
+  // Form management
+  const [form] = Form.useForm<IContactoState['contacto']>();
+
+  const onFinish = (contacto: IContactoState['editContacto']) => {
     const dob = empresaChecked
-      ? contacto.dob && '01/01/2000'
-      : contacto.dob && (contacto.dob! as Dayjs).locale('es-DO').format('DD/MM/YYYY');
-    dispatch(guardarContacto({ contacto: { ...contacto, dob }, form, setEmpresaChecked, setVendedorChecked }));
+      ? contacto?.dob && '01/01/2000'
+      : contacto?.dob && (contacto.dob! as Dayjs).locale('es-DO').format('DD/MM/YYYY');
+    // form.setFieldValue('id', contactoId);
+    dispatch(
+      editarContacto({
+        contacto: { ...contacto!, dob, id: editContacto?.id },
+        form,
+        setEmpresaChecked,
+        setVendedorChecked,
+      })
+    );
   };
 
   const handleClear = () => {
-    dispatch(clearContacto());
-    form.resetFields();
-    setEmpresaChecked(false);
-    setVendedorChecked(false);
+    router.push('/contactos/ver');
   };
-
   // End Form management
 
   useEffect(() => {
     dispatch(setMainSectionLoading(false));
+    return () => {
+      setEditContacto(null);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (isMainSectionLoading) {
     return <Loading />;
   }
+  if (!editContacto) {
+    return (
+      <Result
+        status="500"
+        title="Ups!"
+        subTitle="Lo sentimos, al parecer no ha elegido un contacto para editar."
+        extra={
+          <Button
+            type="primary"
+            onClick={() => {
+              router.push('/contactos/ver');
+            }}
+          >
+            Volver
+          </Button>
+        }
+      />
+    );
+  }
+
   return (
     <>
       <Head>
-        <title>Plan Ocaso | Crear Contacto</title>
+        <title>Plan Ocaso | Editar Contacto</title>
       </Head>
 
       <h3 style={{ textAlign: 'center', padding: '20px' }}>Creación de Contacto</h3>
 
-      <section id="crear-contacto" style={{ padding: '0px 30px 10px 0px' }}>
+      <section id="editar-contacto" style={{ padding: '10px 30px 10px 0px' }}>
         <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
           <Segmented
             style={{ fontWeight: 'bold', marginBottom: '40px' }}
@@ -92,8 +119,8 @@ function ContactosCrear({}: Props): JSX.Element {
                   form.setFieldValue('empresa', false);
                   form.setFieldValue('vendedor', false);
                   dispatch(
-                    setContacto({
-                      ...contacto,
+                    setEditContacto({
+                      ...editContacto,
                       empresa: false,
                       vendedor: false,
                     })
@@ -110,8 +137,8 @@ function ContactosCrear({}: Props): JSX.Element {
                   setEmpresaChecked(true);
                   setVendedorChecked(false);
                   dispatch(
-                    setContacto({
-                      ...contacto,
+                    setEditContacto({
+                      ...editContacto,
                       empresa: true,
                       vendedor: false,
                     })
@@ -124,8 +151,8 @@ function ContactosCrear({}: Props): JSX.Element {
                   form.setFieldValue('empresa', false);
                   form.setFieldValue('vendedor', true);
                   dispatch(
-                    setContacto({
-                      ...contacto,
+                    setEditContacto({
+                      ...editContacto,
                       empresa: false,
                       vendedor: true,
                     })
@@ -145,16 +172,16 @@ function ContactosCrear({}: Props): JSX.Element {
         <Form
           {...formItemLayout}
           form={form}
-          name="createContacto"
+          name="editContacto"
           initialValues={{
-            ...contacto,
-            dob: contacto.dob && dayjs(contacto.dob, 'DD/MM/YYYY'),
+            ...editContacto,
+            dob: editContacto?.dob && dayjs(editContacto.dob, 'DD/MM/YYYY'),
           }}
           onFinish={onFinish}
           onChange={() => {
             const contacto: IContactoState['contacto'] = form.getFieldsValue();
             const dob = contacto.dob && (contacto.dob! as Dayjs).format('DD/MM/YYYY');
-            dispatch(setContacto({ ...contacto, dob, direccion: contacto.direccion }));
+            dispatch(setEditContacto({ ...contacto, dob, direccion: contacto.direccion }));
           }}
         >
           <div className="row">
@@ -218,24 +245,13 @@ function ContactosCrear({}: Props): JSX.Element {
                 rules={[
                   { required: true, message: 'Favor ingrese la cédula' },
                   { max: 13, message: 'No se permiten más dígitos' },
-                  { min: 12, message: 'No se permiten menos dígitos' },
                   {
                     pattern: new RegExp(/^\d{3}-{0,1}\d{7}-{0,1}\d{1}$/),
                     message: 'Usar formato xxx-xxxxxxx-x',
                   },
                 ]}
               >
-                <Input
-                  value={cedula}
-                  placeholder="XXX-XXXXXXX-X"
-                  onChange={(e) => {
-                    console.log(e.target.value, e.target.value.length);
-                    const x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,7})(\d{0,1})/) ?? '';
-                    const y = !x[2] ? x[1] : `${x[1]}-${x[2]}${x[3] ? '-' + x[3] : ''}`;
-                    form.setFieldValue('cedula', y);
-                    setCedula(y);
-                  }}
-                />
+                <Input placeholder="XXX-XXXXXXX-X" />
               </Form.Item>
 
               <Form.Item
@@ -262,8 +278,8 @@ function ContactosCrear({}: Props): JSX.Element {
                     format="DD/MM/YYYY"
                     onChange={(value) => {
                       dispatch(
-                        setContacto({
-                          ...contacto,
+                        setEditContacto({
+                          ...editContacto!,
                           dob: value?.format('DD/MM/YYYY'),
                         })
                       );
@@ -290,7 +306,7 @@ function ContactosCrear({}: Props): JSX.Element {
                       { value: 'OTRO', label: 'OTRO' },
                     ]}
                     onChange={(record) => {
-                      dispatch(setContacto({ ...contacto, eCivil: record }));
+                      dispatch(setEditContacto({ ...editContacto!, eCivil: record }));
                     }}
                   />
                 </Form.Item>
@@ -307,7 +323,7 @@ function ContactosCrear({}: Props): JSX.Element {
                       { value: 'O', label: 'OTRO' },
                     ]}
                     onChange={(record) => {
-                      dispatch(setContacto({ ...contacto, sexo: record }));
+                      dispatch(setEditContacto({ ...editContacto!, sexo: record }));
                     }}
                   />
                 </Form.Item>
@@ -343,22 +359,12 @@ function ContactosCrear({}: Props): JSX.Element {
                   { min: 10, message: 'No se permiten más dígitos' },
                   {
                     required: true,
-                    pattern: new RegExp(/^(\+\d{1,3}[\s-])?\(?\d{3}\)?-{0,1}\d{3}-{0,1}\d{4}$/),
+                    pattern: new RegExp(/^(\+\d{1,3}[\s-])?\(?\d{3}\)?-\d{3}-\d{4}$/),
                     message: 'Usar formato xxx-xxx-xxxx',
                   },
                 ]}
               >
-                <Input
-                  value={cel}
-                  placeholder="XXX-XXX-XXXX"
-                  onChange={(e) => {
-                    console.log(e.target.value, e.target.value.length);
-                    const x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/) ?? '';
-                    const y = !x[2] ? x[1] : `${x[1]}-${x[2]}${x[3] ? '-' + x[3] : ''}`;
-                    form.setFieldValue('cel', y);
-                    setCel(y);
-                  }}
-                />
+                <Input placeholder="xxx-xxx-xxxx" />
               </Form.Item>
 
               <Form.Item
@@ -375,17 +381,7 @@ function ContactosCrear({}: Props): JSX.Element {
                   },
                 ]}
               >
-                <Input
-                  value={tel}
-                  placeholder="XXX-XXX-XXXX"
-                  onChange={(e) => {
-                    console.log(e.target.value, e.target.value.length);
-                    const x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,7})/) ?? '';
-                    const y = !x[2] ? x[1] : `${x[1]}-${x[2]}${x[3] ? '-' + x[3] : ''}`;
-                    form.setFieldValue('tel', y);
-                    setTel(y);
-                  }}
-                />
+                <Input placeholder="xxx-xxx-xxxx" />
               </Form.Item>
             </div>
             <div className="col-xs-12 col-sm-12 col-md-12 col-lg-6 col-xl-6">
@@ -402,10 +398,10 @@ function ContactosCrear({}: Props): JSX.Element {
                   onChange={(record) => {
                     setPais(record);
                     // eslint-disable-next-line no-unused-vars
-                    const { pais, ...rest } = contacto.direccion;
+                    const { pais, ...rest } = editContacto!.direccion;
                     dispatch(
-                      setContacto({
-                        ...contacto,
+                      setEditContacto({
+                        ...editContacto!,
                         direccion: { ...rest, pais: { nombre: record } },
                       })
                     );
@@ -429,10 +425,10 @@ function ContactosCrear({}: Props): JSX.Element {
                     ]}
                     onChange={(record) => {
                       // eslint-disable-next-line no-unused-vars
-                      const { region, ...rest } = contacto.direccion;
+                      const { region, ...rest } = editContacto!.direccion;
                       dispatch(
-                        setContacto({
-                          ...contacto,
+                        setEditContacto({
+                          ...editContacto!,
                           direccion: { ...rest, ...(record && { region: { nombre: record } }) },
                         })
                       );
@@ -463,10 +459,10 @@ function ContactosCrear({}: Props): JSX.Element {
                       )?.municipios.map((p) => ({ value: p.codigo, label: p.nombre }));
                       setMunicipios(value || []);
                       // eslint-disable-next-line no-unused-vars
-                      const { provincia, municipio, ...rest } = contacto.direccion;
+                      const { provincia, municipio, ...rest } = editContacto!.direccion;
                       dispatch(
-                        setContacto({
-                          ...contacto,
+                        setEditContacto({
+                          ...editContacto!,
                           direccion: { ...rest, ...(record && { provincia: { nombre: record } }) },
                         })
                       );
@@ -476,7 +472,7 @@ function ContactosCrear({}: Props): JSX.Element {
                 </Form.Item>
               ) : null}
 
-              {municipios.length > 0 && pais ? (
+              {municipios.length > 0 ? (
                 <Form.Item
                   name={['direccion', 'municipio', 'nombre']}
                   label="Municipio"
@@ -488,9 +484,9 @@ function ContactosCrear({}: Props): JSX.Element {
                     options={municipios}
                     onChange={(record) => {
                       dispatch(
-                        setContacto({
-                          ...contacto,
-                          direccion: { ...contacto.direccion, municipio: { nombre: record } },
+                        setEditContacto({
+                          ...editContacto!,
+                          direccion: { ...editContacto!.direccion, municipio: { nombre: record } },
                         })
                       );
                     }}
@@ -568,29 +564,20 @@ function ContactosCrear({}: Props): JSX.Element {
                   <Input placeholder="11000" />
                 </Form.Item>
               ) : null}
-
-              <Form.Item
-                style={{ visibility: 'hidden' }}
-                valuePropName="checked"
-                name="empresa"
-                label="Es una empresa"
-              />
-
-              <Form.Item style={{ visibility: 'hidden' }} valuePropName="checked" name="vendedor" label="Es vendedor" />
+              <Form.Item style={{ visibility: 'hidden' }} name="id" label="ID"></Form.Item>
+              <Form.Item style={{ visibility: 'hidden' }} name="empresa" label="ID"></Form.Item>
+              <Form.Item style={{ visibility: 'hidden' }} name="vendedor" label="ID"></Form.Item>
             </div>
           </div>
 
           <Form.Item {...tailFormItemLayout}>
             <Space style={{ display: 'flex', justifyContent: 'center' }}>
               <Button type="primary" htmlType="submit">
-                Crear
+                Actualizar
               </Button>
-              <Button onClick={handleClear}>Limpiar</Button>
+              <Button onClick={handleClear}>Volver</Button>
             </Space>
           </Form.Item>
-
-          <Form.Item style={{ visibility: 'hidden' }} name="empresa" label="Empresa"></Form.Item>
-          <Form.Item style={{ visibility: 'hidden' }} name="vendedor" label="Vendedor"></Form.Item>
         </Form>
       </section>
     </>
@@ -614,6 +601,6 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   };
 };
 
-ContactosCrear.layout = AppContainer;
+ContactosEditar.layout = AppContainer;
 
-export default ContactosCrear;
+export default ContactosEditar;
