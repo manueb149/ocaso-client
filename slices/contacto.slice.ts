@@ -13,6 +13,7 @@ import { PaginatedResult } from '../src/models/types.model';
 
 const initialState: IContactoState = {
   contacto: {
+    id: '',
     cedula: '',
     rnc: undefined,
     nombres: '',
@@ -40,6 +41,7 @@ const initialState: IContactoState = {
   },
   suggestions: [],
   viewContacto: null,
+  editContacto: null,
   selectedContacto: null,
   selectedIntermediario: null,
 };
@@ -121,6 +123,43 @@ export const guardarContacto = createAsyncThunk(
   }
 );
 
+export const editarContacto = createAsyncThunk(
+  'CONTACTO_REDUCERS/EDITAR_CONTACTO',
+  async (
+    {
+      contacto,
+      form,
+    }: {
+      contacto: IContacto;
+      form: FormInstance<IContacto>;
+      setEmpresaChecked?: Dispatch<SetStateAction<boolean>>;
+      setVendedorChecked?: Dispatch<SetStateAction<boolean>>;
+    },
+    { dispatch }
+  ) => {
+    try {
+      console.log(contacto, form.getFieldsValue());
+      const res = await fetch(`/api/contactos/editar`, {
+        method: 'PATCH',
+        body: JSON.stringify(contacto),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        if (res.status === 401) {
+          fetch(`/api/auth/logout`).then(() => signOut());
+        } else {
+          Notify('warn', `${data?.data?.message}`);
+        }
+      } else {
+        Notify('success', `Contacto editado`);
+      }
+    } catch (error: any) {}
+  }
+);
+
 export const eliminarContacto = createAsyncThunk(
   'CONTACTO_REDUCERS/ELIMINAR_CONTACTO',
   async ({ id, fetchData }: { id: string; fetchData: () => void }) => {
@@ -191,8 +230,8 @@ const contactoSlice = createSlice({
   initialState: initialState,
   reducers: {
     setContacto: (state, action: PayloadAction<IContacto>) => {
-      state.contacto = { ...state.contacto, ...action.payload };
-      localStorage.setItem('contactoForm', JSON.stringify({ ...state.contacto, ...action.payload }));
+      state.contacto = { ...action.payload };
+      localStorage.setItem('contactoForm', JSON.stringify({ ...action.payload }));
     },
     setContactos: (state, action: PayloadAction<PaginatedResult<IContacto>>) => {
       state.contactos = action.payload;
@@ -222,11 +261,17 @@ const contactoSlice = createSlice({
       };
       localStorage.removeItem('contactoForm');
     },
+    clearEditContacto: (state) => {
+      state.editContacto = null;
+    },
     setSuggestions: (state, action: PayloadAction<IContacto[]>) => {
       state.suggestions = action.payload;
     },
     setViewContacto: (state, action: PayloadAction<IContacto | null>) => {
       state.viewContacto = action.payload;
+    },
+    setEditContacto: (state, action: PayloadAction<IContacto | null>) => {
+      state.editContacto = action.payload;
     },
     setSelectedContacto: (state, action: PayloadAction<IContacto | null>) => {
       state.selectedContacto = action.payload;
@@ -243,10 +288,12 @@ const contactoSlice = createSlice({
 export const {
   setContacto,
   clearContacto,
+  clearEditContacto,
   setSaving,
   setContactos,
   setSuggestions,
   setViewContacto,
+  setEditContacto,
   setSelectedContacto,
   setSelectedIntermediario,
 } = contactoSlice.actions;

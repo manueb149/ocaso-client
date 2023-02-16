@@ -145,26 +145,11 @@ const TableContacto: React.FC<Props> = () => {
       render: (value) => value || '',
     },
     {
-      title: 'Email',
-      dataIndex: 'email',
-      key: 'email',
+      title: 'Celular',
+      dataIndex: 'cel',
+      key: 'cel',
       width: '10%',
     },
-    // {
-    //   title: 'Sexo',
-    //   dataIndex: 'sexo',
-    //   key: 'sexo',
-    //   align: 'center',
-    //   sorter: true,
-    //   filterMultiple: false,
-    //   filters: [
-    //     { text: 'Masculino', value: 'M' },
-    //     { text: 'Femenino', value: 'F' },
-    //     { text: 'Otro', value: 'O' },
-    //   ],
-    //   width: '10%',
-    //   render: (value) => (value === 'M' ? 'Masculino' : value === 'F' ? 'Femenino' : 'Otro'),
-    // },
     {
       title: 'Empresa',
       dataIndex: 'empresa',
@@ -197,7 +182,7 @@ const TableContacto: React.FC<Props> = () => {
       title: 'Acciones',
       width: '10%',
       align: 'center',
-      render: (record) => (
+      render: (_, record) => (
         <div>
           <Space style={{ width: '100%', justifyContent: 'center' }}>
             <ActionButton table="contactos" action="Ver" record={record} icon={faEye} />
@@ -226,7 +211,7 @@ const TableContacto: React.FC<Props> = () => {
     <>
       <TableAnt
         columns={columns}
-        rowKey={(record) => record.cedula}
+        rowKey={(record) => record.id!}
         dataSource={contactos.results}
         pagination={params.pagination}
         loading={loading}

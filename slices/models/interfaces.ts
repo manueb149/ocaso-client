@@ -20,6 +20,7 @@ export interface IContactoState {
   contactos: PaginatedResult<IContacto>;
   suggestions: IContacto[];
   viewContacto: IContacto | null;
+  editContacto: IContacto | null;
   selectedContacto: IContacto | null;
   selectedIntermediario: IContacto | null;
   pagination?: TablePaginationConfig;
