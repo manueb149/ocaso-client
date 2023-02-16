@@ -60,18 +60,20 @@ const Autocomplete: React.FC<Props> = ({ type = 'Contratante', disabled = false 
 
   return (
     <Form.Item
+      id={`autocomplete${type}`}
       name={type.toLowerCase()}
       label={type}
       hasFeedback
       rules={[
         {
-          required: true,
+          required: type === 'Contratante',
           message: `Ingrese un ${type}`,
         },
       ]}
     >
       <Select
         value={value}
+        allowClear={type === 'Vendedor'}
         showSearch
         placeholder="Buscar por cédula"
         optionFilterProp="children"

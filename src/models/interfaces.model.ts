@@ -14,7 +14,7 @@ export interface ISolicitud {
   numSolicitud?: number;
   numDocumento?: number;
   contratante: IContacto['cedula'];
-  vendedor: IContacto['cedula'];
+  vendedor?: IContacto['cedula'];
   plan: Plan;
   desde: Date | string | Dayjs;
   hasta: Date | string | Dayjs;
