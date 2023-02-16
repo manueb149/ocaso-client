@@ -211,7 +211,7 @@ export const suggestContacto = createAsyncThunk(
           Notify('warn', `${data?.data?.message}`);
         }
       } else {
-        const suggestions = data.data.suggestions as IContacto[];
+        const suggestions = (data.data.suggestions as IContacto[]).filter((contacto) => contacto.status);
         dispatch(setSuggestions(suggestions));
       }
     } catch (error: any) {}
