@@ -8,6 +8,8 @@ import { ITableParams } from '../../../slices/models/interfaces';
 import { ISolicitud } from '../../models/interfaces.model';
 import ActionButton from '../ActionButton/ActionButton';
 import { faEye, faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
+import dayjs from 'dayjs';
+require('dayjs/locale/es');
 
 interface Props {}
 
@@ -55,13 +57,13 @@ const TableSolicitud: React.FC<Props> = () => {
       title: 'Desde',
       dataIndex: 'desde',
       key: 'desde',
-      render: (text) => <>{new Date(text).toLocaleDateString()}</>,
+      render: (text) => <>{dayjs(text, 'DD/MM/YYYY').format('DD/MM/YYYY')}</>,
     },
     {
       title: 'Hasta',
       dataIndex: 'hasta',
       key: 'hasta',
-      render: (text) => <>{new Date(text).toLocaleDateString()}</>,
+      render: (text) => <>{dayjs(text, 'DD/MM/YYYY').format('DD/MM/YYYY')}</>,
     },
     {
       title: 'Acciones',
