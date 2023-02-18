@@ -38,6 +38,9 @@ function ContactosEditar({}: Props): JSX.Element {
   const [tipoContacto, setTipoContacto] = useState<string>(
     editContacto?.empresa ? 'EMPRESA' : editContacto?.vendedor ? 'VENDEDOR' : 'CLIENTE'
   );
+  const [cedula, setCedula] = useState<string>('');
+  const [cel, setCel] = useState<string>('');
+  const [tel, setTel] = useState<string>('');
 
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
@@ -194,7 +197,7 @@ function ContactosEditar({}: Props): JSX.Element {
                 rules={[
                   {
                     required: true,
-                    pattern: new RegExp(/^[A-Za-z0-9_@./#&+-\s]*$/),
+                    pattern: new RegExp(/^[A-Za-z0-9_@./#&+-\s\u00f1\u00d1]*$/),
                     message: 'Favor ingresar solo letras',
                   },
                   { required: true, message: 'Favor ingrese un nombre', whitespace: true },
@@ -218,7 +221,7 @@ function ContactosEditar({}: Props): JSX.Element {
                   rules={[
                     {
                       required: !empresaChecked,
-                      pattern: new RegExp(/^[a-zA-Z\s]*$/),
+                      pattern: new RegExp(/^[a-zA-Z\s\u00f1\u00d1]*$/),
                       message: 'Favor ingresar solo letras',
                     },
                     {
@@ -245,13 +248,24 @@ function ContactosEditar({}: Props): JSX.Element {
                 rules={[
                   { required: true, message: 'Favor ingrese la cédula' },
                   { max: 13, message: 'No se permiten más dígitos' },
+                  { min: 12, message: 'No se permiten menos dígitos' },
                   {
                     pattern: new RegExp(/^\d{3}-{0,1}\d{7}-{0,1}\d{1}$/),
                     message: 'Usar formato xxx-xxxxxxx-x',
                   },
                 ]}
               >
-                <Input placeholder="XXX-XXXXXXX-X" />
+                <Input
+                  value={cedula}
+                  placeholder="XXX-XXXXXXX-X"
+                  onChange={(e) => {
+                    console.log(e.target.value, e.target.value.length);
+                    const x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,7})(\d{0,1})/) ?? '';
+                    const y = !x[2] ? x[1] : `${x[1]}-${x[2]}${x[3] ? '-' + x[3] : ''}`;
+                    form.setFieldValue('cedula', y);
+                    setCedula(y);
+                  }}
+                />
               </Form.Item>
 
               <Form.Item
@@ -359,12 +373,22 @@ function ContactosEditar({}: Props): JSX.Element {
                   { min: 10, message: 'No se permiten más dígitos' },
                   {
                     required: true,
-                    pattern: new RegExp(/^(\+\d{1,3}[\s-])?\(?\d{3}\)?-\d{3}-\d{4}$/),
+                    pattern: new RegExp(/^(\+\d{1,3}[\s-])?\(?\d{3}\)?-{0,1}\d{3}-{0,1}\d{4}$/),
                     message: 'Usar formato xxx-xxx-xxxx',
                   },
                 ]}
               >
-                <Input placeholder="xxx-xxx-xxxx" />
+                <Input
+                  value={cel}
+                  placeholder="XXX-XXX-XXXX"
+                  onChange={(e) => {
+                    console.log(e.target.value, e.target.value.length);
+                    const x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/) ?? '';
+                    const y = !x[2] ? x[1] : `${x[1]}-${x[2]}${x[3] ? '-' + x[3] : ''}`;
+                    form.setFieldValue('cel', y);
+                    setCel(y);
+                  }}
+                />
               </Form.Item>
 
               <Form.Item
@@ -381,7 +405,17 @@ function ContactosEditar({}: Props): JSX.Element {
                   },
                 ]}
               >
-                <Input placeholder="xxx-xxx-xxxx" />
+                <Input
+                  value={tel}
+                  placeholder="XXX-XXX-XXXX"
+                  onChange={(e) => {
+                    console.log(e.target.value, e.target.value.length);
+                    const x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,7})/) ?? '';
+                    const y = !x[2] ? x[1] : `${x[1]}-${x[2]}${x[3] ? '-' + x[3] : ''}`;
+                    form.setFieldValue('tel', y);
+                    setTel(y);
+                  }}
+                />
               </Form.Item>
             </div>
             <div className="col-xs-12 col-sm-12 col-md-12 col-lg-6 col-xl-6">

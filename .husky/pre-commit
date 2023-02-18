@@ -3,6 +3,13 @@
 
 echo '🏗️👷 Styling, testing and building your project before committing'
 
+# Remove .next folder
+npm run remove-next ||
+(
+  echo '❌ Removing .next folder failed, please delete it bafore commit.';
+  false;
+)
+
 # Check Prettier standards
 npm run check-format ||
 (

@@ -44,6 +44,7 @@ const ViewContactoModal: React.FC<{}> = () => {
         onCancel={() => handleClose(false)}
         bodyStyle={{
           padding: '10px 20px 0px 10px',
+          width: '100%',
           height: '70vh',
           overflowX: 'auto',
         }}

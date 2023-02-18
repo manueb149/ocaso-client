@@ -167,7 +167,7 @@ function ContactosCrear({}: Props): JSX.Element {
                 rules={[
                   {
                     required: true,
-                    pattern: new RegExp(/^[A-Za-z0-9_@./#&+-\s]*$/),
+                    pattern: new RegExp(/^[A-Za-z0-9_@./#&+-\s\u00f1\u00d1]*$/),
                     message: 'Favor ingresar solo letras',
                   },
                   { required: true, message: 'Favor ingrese un nombre', whitespace: true },
@@ -191,7 +191,7 @@ function ContactosCrear({}: Props): JSX.Element {
                   rules={[
                     {
                       required: !empresaChecked,
-                      pattern: new RegExp(/^[a-zA-Z\s]*$/),
+                      pattern: new RegExp(/^[a-zA-Z\s\u00f1\u00d1]*$/),
                       message: 'Favor ingresar solo letras',
                     },
                     {
