@@ -1,5 +1,5 @@
 import React from 'react';
-import { Descriptions } from 'antd';
+import { Col, Descriptions, Row } from 'antd';
 import { IDependientes } from '../../../models/interfaces.model';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../../config/configureStore';
@@ -99,6 +99,25 @@ const Review: React.FC<Props> = ({ contratanteInfo, dependientesInfo }) => {
         style={{ marginTop: '20px' }}
       ></Descriptions>
       <TableAnt columns={columns} dataSource={dependientesInfo} pagination={false} />
+      <Row style={{ marginTop: '20px' }} gutter={[16 + 8 * 1, 16 + 8 * 1]}>
+        <Col span={12}>
+          <Descriptions title="Pago cotizador" layout="horizontal" bordered column={1} size="small">
+            <Descriptions.Item label="Prima">0</Descriptions.Item>
+            <Descriptions.Item label="Extra Prima">0</Descriptions.Item>
+            <Descriptions.Item label="ITBS">0</Descriptions.Item>
+            <Descriptions.Item label={<b>TOTAL</b>}>0</Descriptions.Item>
+          </Descriptions>
+        </Col>
+        <Col span={12}>
+          {' '}
+          <Descriptions title="Pago al contado" layout="horizontal" bordered column={1} size="small">
+            <Descriptions.Item label="Prima">0</Descriptions.Item>
+            <Descriptions.Item label="Extra Prima">0</Descriptions.Item>
+            <Descriptions.Item label="ITBS">0</Descriptions.Item>
+            <Descriptions.Item label={<b>TOTAL</b>}>0</Descriptions.Item>
+          </Descriptions>
+        </Col>
+      </Row>
       <Descriptions
         title="Pago"
         layout="horizontal"

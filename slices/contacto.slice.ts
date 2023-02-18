@@ -68,6 +68,7 @@ export const verContactos = createAsyncThunk(
           fetch(`/api/auth/logout`).then(() => signOut());
         } else {
           Notify('warn', `Error al cargar los contactos`);
+          dispatch(setTableLoading(false));
         }
       } else {
         const activeContactos = data.contactos.results.filter((contacto) => contacto.status);
