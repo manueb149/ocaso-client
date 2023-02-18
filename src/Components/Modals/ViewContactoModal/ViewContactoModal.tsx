@@ -67,7 +67,9 @@ const ViewContactoModal: React.FC<{}> = () => {
             {!viewContacto.empresa ? (
               <Descriptions.Item label={<b>Fecha de nacimiento</b>} span={1}>
                 {viewContacto.dob
-                  ? `${dob.format('dddd D')} DE ${dob.format('MMMM')} DEL ${dob.format('YYYY')}`.toUpperCase()
+                  ? `${dayjs(dob, 'DD/MM/YYYY').format('dddd D')} DE ${dayjs(dob, 'DD/MM/YYYY').format(
+                      'MMMM'
+                    )} DEL ${dayjs(dob, 'DD/MM/YYYY').format('YYYY')}`.toUpperCase()
                   : ''}
               </Descriptions.Item>
             ) : (
