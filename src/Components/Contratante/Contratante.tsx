@@ -23,6 +23,7 @@ const Contratante: React.FC<Props> = ({ name, form, planes = [], next }): JSX.El
   const [hasta, setFechaTermino] = useState<Dayjs | null>(null);
   const [montos, setMontos] = useState<number[]>([]);
   const [pago, setPago] = useState<string | null>(null);
+  // eslint-disable-next-line no-unused-vars
   const [prima, setPrima] = useState<number | null>(null);
   const { selectedContacto } = useSelector((state: RootState) => state.contacto);
 
@@ -162,7 +163,7 @@ const Contratante: React.FC<Props> = ({ name, form, planes = [], next }): JSX.El
                     const plan = planes.filter((item) => item.nombre === form.getFieldValue('plan'))[0];
                     const index = plan.valor.findIndex((value) => value === valor);
                     setPrima(plan.prima[index]);
-                    form.setFieldValue('prima', plan.prima[index]);
+                    form.setFieldValue('prima', null);
                   } else {
                     setPrima(null);
                   }
@@ -201,8 +202,17 @@ const Contratante: React.FC<Props> = ({ name, form, planes = [], next }): JSX.El
           ) : null}
 
           {pago ? (
-            <Form.Item name="prima" label="Prima">
-              <Input placeholder={prima?.toLocaleString() || ''} value={prima?.toLocaleString() || 0} disabled />
+            <Form.Item
+              name="prima"
+              label="Prima"
+              rules={[
+                {
+                  required: true,
+                  message: `Ingrese un valor`,
+                },
+              ]}
+            >
+              <Input placeholder="0" />
             </Form.Item>
           ) : null}
 

@@ -1,5 +1,4 @@
 import { FilterValue, Key, SorterResult, SortOrder, TablePaginationConfig } from 'antd/es/table/interface';
-import { Dayjs } from 'dayjs';
 import { Modules } from '../../src/models/enums.model';
 import { IContacto, ISolicitud } from '../../src/models/interfaces.model';
 import { PaginatedResult } from '../../src/models/types.model';
@@ -12,6 +11,7 @@ export interface ILayoutState {
   isConfigModalOpen: boolean;
   isNewPasswordModalOpen: boolean;
   isViewContactoModalOpen: boolean;
+  isViewSolicitudModalOpen: boolean;
 }
 
 export interface IContactoState {
@@ -27,22 +27,9 @@ export interface IContactoState {
 }
 
 export interface ISolicitudState {
-  solicitud: {
-    plan?: {
-      nombre: string;
-      valor: number;
-      prima: number;
-    };
-    numDocumento?: number;
-    contratante?: string;
-    vendedor?: string;
-    desde?: Dayjs | string | null;
-    hasta?: Dayjs | string | null;
-    vigencia?: number;
-    inscritos?: [];
-    numSolicitud?: number;
-    cobertura?: [];
-  };
+  solicitud: ISolicitud;
+  viewSolicitud: ISolicitud | null;
+  editSolicitud: ISolicitud | null;
   saving: boolean;
   solicitudes: PaginatedResult<ISolicitud>;
   suggestions: ISolicitud[];

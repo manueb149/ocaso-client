@@ -10,6 +10,7 @@ const initialState: ILayoutState = {
   isConfigModalOpen: false,
   isNewPasswordModalOpen: false,
   isViewContactoModalOpen: false,
+  isViewSolicitudModalOpen: false,
 };
 
 const layoutSlice = createSlice({
@@ -37,6 +38,9 @@ const layoutSlice = createSlice({
     setViewContactoModal: (state, action: PayloadAction<boolean>) => {
       state.isViewContactoModalOpen = action.payload;
     },
+    setViewSolicitudModal: (state, action: PayloadAction<boolean>) => {
+      state.isViewSolicitudModalOpen = action.payload;
+    },
   },
 });
 
@@ -48,6 +52,7 @@ export const {
   setToggleConfigModal,
   setToggleNewPasswordModal,
   setViewContactoModal,
+  setViewSolicitudModal,
 } = layoutSlice.actions;
 
 export default layoutSlice.reducer;

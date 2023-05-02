@@ -11,6 +11,8 @@ export interface ILoginForm {
 
 // SOLICITUD
 export interface ISolicitud {
+  titular?: string;
+  nombreVendedor?: string;
   numSolicitud?: number;
   numDocumento?: number;
   contratante: IContacto['cedula'];

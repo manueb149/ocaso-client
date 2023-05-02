@@ -4,7 +4,7 @@ import { signOut } from 'next-auth/react';
 import { Notify } from '../config/notifications';
 import { ISolicitudState, ITableParams } from './models/interfaces';
 import qs from 'querystring';
-import { ISolicitud } from '../src/models/interfaces.model';
+import { IContacto, ISolicitud } from '../src/models/interfaces.model';
 import { getTableParams } from '../utils/getTableParams';
 import { setTableLoading, setTableParams } from './table.slice';
 import { PaginatedResult } from '../src/models/types.model';
@@ -15,16 +15,16 @@ const initialState: ISolicitudState = {
       nombre: '',
       valor: 0,
       prima: 0.0,
+      pago: '',
     },
     numDocumento: 0,
     contratante: '',
     vendedor: '',
-    desde: null,
-    hasta: null,
+    desde: '',
+    hasta: '',
     vigencia: 0,
     inscritos: [],
     numSolicitud: 0,
-    cobertura: [],
   },
 
   saving: false,
@@ -36,6 +36,8 @@ const initialState: ISolicitudState = {
     totalResults: 0,
   },
   suggestions: [],
+  viewSolicitud: null,
+  editSolicitud: null,
   selectedSolicitud: null,
   selectedIntermediario: null,
 };
@@ -51,6 +53,13 @@ export const verSolicitudes = createAsyncThunk(
           'Content-Type': 'application/json',
         },
       });
+      const contactos = await fetch(`/api/contactos/ver?limit=1000`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const dataContactos = (await contactos.json()) as { contactos: PaginatedResult<IContacto> };
       const data = (await res.json()) as { solicitudes: PaginatedResult<ISolicitud> };
       const pagination = {
         current: data?.solicitudes?.page ?? 1,
@@ -65,7 +74,20 @@ export const verSolicitudes = createAsyncThunk(
           dispatch(setTableLoading(false));
         }
       } else {
-        dispatch(setSolicitudes(data.solicitudes));
+        const solicitudes: PaginatedResult<ISolicitud> = {
+          ...data.solicitudes,
+          results: data.solicitudes.results.map((solicitud) => {
+            const contacto = dataContactos.contactos.results.filter((item) => item.cedula === solicitud.contratante);
+            const vendedor = dataContactos.contactos.results.filter((item) => item.cedula === solicitud.vendedor);
+            return {
+              ...solicitud,
+              titular: `${contacto[0]?.nombres} ${contacto[0]?.apellidos}`,
+              nombreVendedor: `${vendedor[0]?.nombres} ${vendedor[0]?.apellidos}`,
+            };
+          }),
+        };
+
+        dispatch(setSolicitudes(solicitudes));
         dispatch(setTableParams({ pagination }));
         dispatch(setTableLoading(false));
       }
@@ -131,6 +153,9 @@ const solicitudSlice = createSlice({
     setSolicitud: (state, action: PayloadAction<ISolicitudState['solicitud']>) => {
       state.solicitud = { ...state.solicitud, ...action.payload };
     },
+    setViewSolicitud: (state, action: PayloadAction<ISolicitud | null>) => {
+      state.viewSolicitud = action.payload;
+    },
     setSolicitudes: (state, action: PayloadAction<PaginatedResult<ISolicitud>>) => {
       state.solicitudes = action.payload;
     },
@@ -142,17 +167,17 @@ const solicitudSlice = createSlice({
         plan: {
           nombre: '',
           valor: 0,
+          pago: '0',
           prima: 0.0,
         },
         numDocumento: 0,
         contratante: '',
         vendedor: '',
-        desde: null,
-        hasta: null,
+        desde: '',
+        hasta: '',
         vigencia: 0,
         inscritos: [],
         numSolicitud: 0,
-        cobertura: [],
       };
     },
     setSuggestions: (state, action: PayloadAction<ISolicitud[]>) => {
@@ -164,6 +189,6 @@ const solicitudSlice = createSlice({
   },
 });
 
-export const { setSolicitud, clearSolicitud, setSaving, setSolicitudes } = solicitudSlice.actions;
+export const { setSolicitud, clearSolicitud, setSaving, setSolicitudes, setViewSolicitud } = solicitudSlice.actions;
 
 export default solicitudSlice.reducer;
