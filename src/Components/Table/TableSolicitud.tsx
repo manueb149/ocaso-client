@@ -37,37 +37,80 @@ const TableSolicitud: React.FC<Props> = () => {
       dataIndex: 'numSolicitud',
       key: 'numSolicitud',
       sorter: true,
-      width: '20%',
+      width: '100px',
     },
     {
       title: 'Contratante',
       dataIndex: 'contratante',
       key: 'contratante',
       sorter: true,
-      width: '20%',
+      width: '130px',
+    },
+    {
+      title: 'Titular',
+      dataIndex: 'titular',
+      key: 'titular',
+      sorter: true,
+      width: '130px',
     },
     {
       title: 'Vendedor',
-      dataIndex: 'vendedor',
-      key: 'vendedor',
+      dataIndex: 'nombreVendedor',
+      key: 'nombreVendedor',
       sorter: true,
-      width: '20%',
+      width: '150px',
+    },
+    // {
+    //   title: 'Vendedor',
+    //   dataIndex: 'vendedor',
+    //   key: 'vendedor',
+    //   sorter: true,
+    //   width: '130px',
+    // },
+    {
+      title: 'Plan',
+      dataIndex: 'plan',
+      key: 'plan',
+      sorter: true,
+      width: '130px',
+      render: (data) => <>{data['nombre']}</>,
+    },
+    {
+      title: 'Prima',
+      dataIndex: 'plan',
+      key: 'plan',
+      sorter: true,
+      align: 'center',
+      width: '110px',
+      render: (data) => <>${data['prima']}</>,
     },
     {
       title: 'Desde',
       dataIndex: 'desde',
       key: 'desde',
+      align: 'center',
+      width: '100px',
       render: (text) => <>{dayjs(text, 'DD/MM/YYYY').format('DD/MM/YYYY')}</>,
     },
     {
       title: 'Hasta',
       dataIndex: 'hasta',
       key: 'hasta',
+      align: 'center',
+      width: '100px',
       render: (text) => <>{dayjs(text, 'DD/MM/YYYY').format('DD/MM/YYYY')}</>,
     },
     {
+      title: 'Vigencia',
+      dataIndex: 'vigencia',
+      key: 'vigencia',
+      align: 'center',
+      width: '100px',
+      render: (years) => <>{`${years} ${years > 1 ? 'años' : 'año'}`}</>,
+    },
+    {
       title: 'Acciones',
-      width: '10%',
+      width: '150px',
       align: 'center',
       render: (record) => (
         <div>
@@ -103,7 +146,7 @@ const TableSolicitud: React.FC<Props> = () => {
         pagination={params.pagination}
         loading={loading}
         onChange={handleTableChange}
-        scroll={{ y: 520, x: 1000 }}
+        scroll={{ y: 520, x: 1300 }}
         size="small"
       />
     </>
