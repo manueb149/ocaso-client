@@ -44,14 +44,17 @@ const initialState: IContactoState = {
   editContacto: null,
   selectedContacto: null,
   selectedIntermediario: null,
+  vendedor: false,
 };
 
 export const verContactos = createAsyncThunk(
   'CONTACTO_REDUCERS/VER_CONTACTOS',
-  async (params: ITableParams | undefined, { dispatch }) => {
+  async (params: ITableParams | undefined, { dispatch, getState }) => {
     try {
+      const { vendedor } = (getState() as RootState).contacto;
+      const vendedorFilter = vendedor ? 'vendedor=true&' : 'vendedor=false&';
       dispatch(setTableLoading(true));
-      const res = await fetch(`/api/contactos/ver?${qs.stringify(getTableParams(params))}`, {
+      const res = await fetch(`/api/contactos/ver?${vendedorFilter}${qs.stringify(getTableParams(params))}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -289,6 +292,9 @@ const contactoSlice = createSlice({
     setPagination: (state, action: PayloadAction<TablePaginationConfig>) => {
       state.pagination = action.payload;
     },
+    setVendedor: (state, action: PayloadAction<boolean>) => {
+      state.vendedor = action.payload;
+    },
   },
 });
 
@@ -303,6 +309,7 @@ export const {
   setEditContacto,
   setSelectedContacto,
   setSelectedIntermediario,
+  setVendedor,
 } = contactoSlice.actions;
 
 export default contactoSlice.reducer;

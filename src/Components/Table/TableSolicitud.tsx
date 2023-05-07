@@ -59,6 +59,7 @@ const TableSolicitud: React.FC<Props> = () => {
       key: 'nombreVendedor',
       sorter: true,
       width: '150px',
+      render: (value) => <>{String(value).includes('undefined') ? 'PROINSA' : value}</>,
     },
     // {
     //   title: 'Vendedor',

@@ -16,19 +16,17 @@ import TableContacto from '../../src/Components/Table/TableContacto';
  */
 function ContactosVer(): JSX.Element {
   const { isMainSectionLoading } = useSelector((state: RootState) => state.layout);
-
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
     dispatch(setMainSectionLoading(false));
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (isMainSectionLoading) {
     return <Loading />;
   }
-  // console.log(contactos);
+
   return (
     <>
       <Head>

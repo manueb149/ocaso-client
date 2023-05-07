@@ -90,7 +90,9 @@ const Review: React.FC<Props> = ({ contratanteInfo, dependientesInfo }) => {
         <Descriptions.Item label="Plan">{contratanteInfo.plan}</Descriptions.Item>
         <Descriptions.Item label="Valor Asegurado">{Number(contratanteInfo.valor).toLocaleString()}</Descriptions.Item>
         <Descriptions.Item label="Forma de pago">{contratanteInfo.pago}</Descriptions.Item>
-        <Descriptions.Item label="Forma de pago">{contratanteInfo.prima}</Descriptions.Item>
+        <Descriptions.Item label={'Prima ' + contratanteInfo.pago?.toLowerCase()}>
+          {contratanteInfo.prima}
+        </Descriptions.Item>
       </Descriptions>
       <Descriptions
         title="Detalle de Dependientes"

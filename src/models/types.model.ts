@@ -22,3 +22,6 @@ export type MenuItem = Required<MenuProps>['items'][number];
 
 // NOTIFICAION
 export type NotificationType = 'success' | 'info' | 'warning' | 'error';
+
+// CONTACTS
+export type TipoContacto = 'EMPRESA' | 'VENDEDOR' | 'CLIENTE';
