@@ -1,0 +1,22 @@
+@import '../variables.scss';
+
+.name {
+  color: $light-sidenav-color;
+  font-weight: 600;
+
+  .plan {
+    color: gray;
+    width: fit-content;
+    border-top: 1px solid gray;
+    font-size: 13px;
+    font-weight: 100;
+  }
+}
+
+.date {
+}
+
+.noAppoint {
+  text-align: center;
+  opacity: 0.6;
+}

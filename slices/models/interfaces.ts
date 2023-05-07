@@ -24,6 +24,7 @@ export interface IContactoState {
   selectedContacto: IContacto | null;
   selectedIntermediario: IContacto | null;
   pagination?: TablePaginationConfig;
+  vendedor: boolean;
 }
 
 export interface ISolicitudState {

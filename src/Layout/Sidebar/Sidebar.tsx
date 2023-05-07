@@ -1,6 +1,14 @@
 import { useEffect } from 'react';
 import { Menu, Layout } from 'antd';
-import { CopyOutlined, FileAddOutlined, UserOutlined, UserAddOutlined, SearchOutlined } from '@ant-design/icons';
+import {
+  CopyOutlined,
+  FileAddOutlined,
+  UserOutlined,
+  UserAddOutlined,
+  SearchOutlined,
+  DollarOutlined,
+  PlusCircleOutlined,
+} from '@ant-design/icons';
 import { MenuInfo } from 'rc-menu/lib/interface';
 import { Modules } from '../../models/enums.model';
 import { useRouter } from 'next/router';
@@ -21,6 +29,10 @@ const Sidebar: React.FC = (): JSX.Element => {
     getItem('Solicitudes', Modules.Solicitudes, <CopyOutlined style={{ fontSize: '15px' }} />, [
       getItem('Ver', `${Modules.Solicitudes}/ver`, <SearchOutlined style={{ fontSize: '15px' }} />),
       getItem('Crear', `${Modules.Solicitudes}/crear`, <FileAddOutlined style={{ fontSize: '15px' }} />),
+    ]),
+    getItem('Pagos', Modules.Pagos, <DollarOutlined style={{ fontSize: '15px' }} />, [
+      getItem('Ver', `${Modules.Pagos}/ver`, <SearchOutlined style={{ fontSize: '15px' }} />),
+      getItem('Crear', `${Modules.Pagos}/crear`, <PlusCircleOutlined style={{ fontSize: '15px' }} />),
     ]),
     getItem('Contactos', Modules.Contactos, <UserOutlined style={{ fontSize: '15px' }} />, [
       getItem('Ver', `${Modules.Contactos}/ver`, <SearchOutlined style={{ fontSize: '15px' }} />),

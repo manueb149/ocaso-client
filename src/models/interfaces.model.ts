@@ -97,3 +97,15 @@ export interface IPlan {
   valor: number[];
   prima: number[];
 }
+
+// Dashboards
+export interface IDividedList {
+  type?: 'today' | 'next';
+  list: {
+    name: string;
+    plan: string;
+    hour: string;
+    month: string;
+    day: string;
+  }[];
+}

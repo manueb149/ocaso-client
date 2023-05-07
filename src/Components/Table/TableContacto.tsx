@@ -1,9 +1,9 @@
-import { Button, Input, InputRef, Space, Table as TableAnt } from 'antd';
+import { Button, Input, InputRef, Segmented, Space, Table as TableAnt } from 'antd';
 import type { ColumnType, ColumnsType, FilterConfirmProps } from 'antd/es/table/interface';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../../config/configureStore';
-import { verContactos } from '../../../slices/contacto.slice';
+import { setVendedor, verContactos } from '../../../slices/contacto.slice';
 import { ITableParams } from '../../../slices/models/interfaces';
 import { IContacto } from '../../models/interfaces.model';
 import { faEye, faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
@@ -14,7 +14,7 @@ import Highlighter from 'react-highlight-words';
 interface Props {}
 
 const TableContacto: React.FC<Props> = () => {
-  const { contactos } = useSelector((state: RootState) => state.contacto);
+  const { contactos, vendedor } = useSelector((state: RootState) => state.contacto);
   const { params, loading } = useSelector((state: RootState) => state.table);
 
   const dispatch = useDispatch<AppDispatch>();
@@ -169,12 +169,12 @@ const TableContacto: React.FC<Props> = () => {
       dataIndex: 'vendedor',
       key: 'vendedor',
       align: 'center',
-      sorter: true,
-      filterMultiple: false,
-      filters: [
-        { text: 'Si', value: true },
-        { text: 'No', value: false },
-      ],
+      // sorter: true,
+      // filterMultiple: false,
+      // filters: [
+      //   { text: 'Si', value: true },
+      //   { text: 'No', value: false },
+      // ],
       width: '10%',
       render: (value) => (value ? 'Si' : 'No'),
     },
@@ -209,6 +209,24 @@ const TableContacto: React.FC<Props> = () => {
 
   return (
     <>
+      <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
+        <Segmented
+          block
+          style={{ fontWeight: 'bold', marginBottom: '10px' }}
+          options={['CLIENTES', 'VENDEDORES']}
+          defaultValue={vendedor ? 'VENDEDORES' : 'CLIENTES'}
+          onResize={undefined}
+          onResizeCapture={undefined}
+          onChange={(value) => {
+            if (value === 'CLIENTES') {
+              dispatch(setVendedor(false));
+            } else {
+              dispatch(setVendedor(true));
+            }
+            fetchData();
+          }}
+        />
+      </Space>
       <TableAnt
         columns={columns}
         rowKey={(record) => record.id!}

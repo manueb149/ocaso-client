@@ -14,8 +14,10 @@ import { IContactoState } from '../../slices/models/interfaces';
 import { clearContacto, guardarContacto, setContacto } from '../../slices/contacto.slice';
 import dayjs, { Dayjs } from 'dayjs';
 import { Provincias } from '../../src/data/pages/contactos/crear/Provincias.constants';
+import { TipoContacto } from '../../src/models/types.model';
 
 interface Props {}
+
 /**
  * Contactos module
  * @return {JSX.Element} Contactos module JSX
@@ -29,7 +31,7 @@ function ContactosCrear({}: Props): JSX.Element {
   const { contacto } = useSelector((state: RootState) => state.contacto);
   const [empresaChecked, setEmpresaChecked] = useState<boolean>(contacto.empresa ?? false);
   const [, setVendedorChecked] = useState<boolean>(contacto.vendedor ?? false);
-  const [tipoContacto, setTipoContacto] = useState<string>(
+  const [tipoContacto, setTipoContacto] = useState<TipoContacto>(
     contacto.empresa ? 'EMPRESA' : contacto.vendedor ? 'VENDEDOR' : 'CLIENTE'
   );
   const [pais, setPais] = useState<string | undefined>(contacto?.direccion?.pais?.nombre ?? undefined);
@@ -55,8 +57,12 @@ function ContactosCrear({}: Props): JSX.Element {
   const handleClear = () => {
     dispatch(clearContacto());
     form.resetFields();
+    setTimeout(() => {
+      form.resetFields();
+    }, 500);
     setEmpresaChecked(false);
     setVendedorChecked(false);
+    setTipoContacto('CLIENTE');
   };
 
   // End Form management
@@ -135,7 +141,7 @@ function ContactosCrear({}: Props): JSX.Element {
 
                   break;
               }
-              setTipoContacto(value as string);
+              setTipoContacto(value as TipoContacto);
             }}
             options={['CLIENTE', 'EMPRESA', 'VENDEDOR']}
             onResize={undefined}
