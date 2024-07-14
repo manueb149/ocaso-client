@@ -135,20 +135,15 @@ export const guardarContacto = createAsyncThunk(
 
 export const editarContacto = createAsyncThunk(
   'CONTACTO_REDUCERS/EDITAR_CONTACTO',
-  async (
-    {
-      contacto,
-      form,
-    }: {
-      contacto: IContacto;
-      form: FormInstance<IContacto>;
-      setEmpresaChecked?: Dispatch<SetStateAction<boolean>>;
-      setVendedorChecked?: Dispatch<SetStateAction<boolean>>;
-    },
-    { dispatch }
-  ) => {
+  async ({
+    contacto,
+  }: {
+    contacto: IContacto;
+    form?: FormInstance<IContacto>;
+    setEmpresaChecked?: Dispatch<SetStateAction<boolean>>;
+    setVendedorChecked?: Dispatch<SetStateAction<boolean>>;
+  }) => {
     try {
-      console.log(contacto, form.getFieldsValue());
       const res = await fetch(`/api/contactos/editar`, {
         method: 'PATCH',
         body: JSON.stringify(contacto),

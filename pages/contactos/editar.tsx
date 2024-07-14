@@ -15,6 +15,7 @@ import { editarContacto, setEditContacto } from '../../slices/contacto.slice';
 import dayjs, { Dayjs } from 'dayjs';
 import { Provincias } from '../../src/data/pages/contactos/crear/Provincias.constants';
 import { useRouter } from 'next/router';
+import { TipoContacto } from '../../src/models/types.model';
 
 interface Props {}
 /**
@@ -22,12 +23,18 @@ interface Props {}
  * @return {JSX.Element} Contactos module JSX
  */
 function ContactosEditar({}: Props): JSX.Element {
+  // Form management
+  const [form] = Form.useForm<IContactoState['contacto']>();
+
+  // State management
   const { isMainSectionLoading } = useSelector((state: RootState) => state.layout);
   const { editContacto } = useSelector((state: RootState) => state.contacto);
 
   const [empresaChecked, setEmpresaChecked] = useState<boolean>(editContacto?.empresa ?? false);
-  // eslint-disable-next-line no-unused-vars
-  const [_, setVendedorChecked] = useState<boolean>(editContacto?.vendedor ?? false);
+  const [, setVendedorChecked] = useState<boolean>(editContacto?.vendedor ?? false);
+  const [tipoContacto, setTipoContacto] = useState<TipoContacto>(
+    editContacto?.empresa ? 'EMPRESA' : editContacto?.vendedor ? 'VENDEDOR' : 'CLIENTE'
+  );
   const [pais, setPais] = useState<string | undefined>(editContacto?.direccion?.pais?.nombre ?? undefined);
   const [municipios, setMunicipios] = useState<{ value: string; label: string }[]>(
     Provincias.find((p) => p.nombre === editContacto?.direccion?.provincia?.nombre)?.municipios.map((p) => ({
@@ -35,34 +42,23 @@ function ContactosEditar({}: Props): JSX.Element {
       label: p.nombre,
     })) ?? []
   );
-  const [tipoContacto, setTipoContacto] = useState<string>(
-    editContacto?.empresa ? 'EMPRESA' : editContacto?.vendedor ? 'VENDEDOR' : 'CLIENTE'
-  );
   const [cedula, setCedula] = useState<string>('');
   const [cel, setCel] = useState<string>('');
   const [tel, setTel] = useState<string>('');
 
-  const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
-
-  // Form management
-  const [form] = Form.useForm<IContactoState['contacto']>();
 
   const onFinish = (contacto: IContactoState['editContacto']) => {
     const dob = empresaChecked
       ? contacto?.dob && '01/01/2000'
       : contacto?.dob && (contacto.dob! as Dayjs).locale('es-DO').format('DD/MM/YYYY');
-    // form.setFieldValue('id', contactoId);
     dispatch(
       editarContacto({
         contacto: { ...contacto!, dob, id: editContacto?.id },
-        form,
-        setEmpresaChecked,
-        setVendedorChecked,
       })
     );
   };
-
+  const router = useRouter();
   const handleClear = () => {
     router.push('/contactos/ver');
   };
@@ -165,7 +161,7 @@ function ContactosEditar({}: Props): JSX.Element {
 
                   break;
               }
-              setTipoContacto(value as string);
+              setTipoContacto(value as TipoContacto);
             }}
             options={['CLIENTE', 'EMPRESA', 'VENDEDOR']}
             onResize={undefined}

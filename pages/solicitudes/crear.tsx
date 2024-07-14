@@ -55,7 +55,7 @@ function SolicitudesCrear({ planes }: Props): JSX.Element {
             onResize={undefined}
             onResizeCapture={undefined}
           />
-          {plan === 'PLAN INDIVIDUAL/FAMILIAR' ? <Individual planes={planes} /> : <Colectivo />}
+          {plan === 'PLAN INDIVIDUAL/FAMILIAR' ? <Individual planes={planes} plan={plan} /> : <Colectivo />}
         </Space>
       </section>
     </>

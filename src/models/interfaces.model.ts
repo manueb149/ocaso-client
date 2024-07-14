@@ -18,6 +18,7 @@ export interface ISolicitud {
   contratante: IContacto['cedula'];
   vendedor?: IContacto['cedula'];
   plan: Plan;
+  tipoPlan: string;
   desde: Date | string | Dayjs;
   hasta: Date | string | Dayjs;
   vigencia: number;

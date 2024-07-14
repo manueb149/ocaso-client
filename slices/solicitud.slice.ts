@@ -17,6 +17,7 @@ const initialState: ISolicitudState = {
       prima: 0.0,
       pago: '',
     },
+    tipoPlan: '',
     numDocumento: 0,
     contratante: '',
     vendedor: '',
@@ -146,6 +147,55 @@ export const guardarSolicitud = createAsyncThunk(
   }
 );
 
+export const editarSolicitud = createAsyncThunk(
+  'CONTACTO_REDUCERS/EDITAR_SOLICITUD',
+  async ({
+    solicitud,
+    formContratante,
+    formDependientes,
+    setCurrent,
+  }: {
+    solicitud: ISolicitud;
+    formContratante: FormInstance;
+    formDependientes: FormInstance;
+    setCurrent: React.Dispatch<React.SetStateAction<number>>;
+  }) => {
+    try {
+      console.log(solicitud);
+      setSaving(true);
+      const res = await fetch(`/api/solicitudes/editar`, {
+        method: 'POST',
+        body: JSON.stringify(solicitud),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        if (res.status === 401) {
+          fetch(`/api/auth/logout`).then(() => signOut());
+        } else {
+          console.log(data?.solicitudes?.message);
+          Notify('warn', `${data?.solicitudes?.message}`);
+        }
+      } else {
+        console.log(data?.solicitudes?.numSolicitud);
+        Notify('success', `Solicitud #${data?.solicitudes?.numSolicitud} guardada!'`, 5000);
+        formContratante.resetFields();
+        formDependientes.resetFields();
+        setSaving(false);
+        setCurrent(0);
+      }
+    } catch (error: any) {
+      setSaving(false);
+      formContratante.resetFields();
+      formDependientes.resetFields();
+      setSaving(false);
+      setCurrent(0);
+    }
+  }
+);
+
 const solicitudSlice = createSlice({
   name: 'solicitudes',
   initialState: initialState,
@@ -170,6 +220,7 @@ const solicitudSlice = createSlice({
           pago: '0',
           prima: 0.0,
         },
+        tipoPlan: '',
         numDocumento: 0,
         contratante: '',
         vendedor: '',

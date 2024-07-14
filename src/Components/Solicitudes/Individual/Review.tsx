@@ -101,7 +101,7 @@ const Review: React.FC<Props> = ({ contratanteInfo, dependientesInfo }) => {
         column={1}
         style={{ marginTop: '20px' }}
       ></Descriptions>
-      <TableAnt columns={columns} dataSource={dependientesInfo} pagination={false} />
+      <TableAnt columns={columns} key={'nombre'} dataSource={dependientesInfo} pagination={false} />
       {/* <Row style={{ marginTop: '20px' }} gutter={[16 + 8 * 1, 16 + 8 * 1]}>
         <Col span={12}>
           <Descriptions title="Pago cotizador" layout="horizontal" bordered column={1} size="small">

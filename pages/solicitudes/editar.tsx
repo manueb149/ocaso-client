@@ -1,13 +1,23 @@
-import { Button, Form, Steps } from 'antd';
-import React, { useState } from 'react';
-import Contratante from '../../Contratante/Contratante';
-import Dependientes from '../../Dependientes/Dependientes';
-import Review from './Review';
-import { IDependientes, IPlan, ISolicitud } from '../../../models/interfaces.model';
-import { Dayjs } from 'dayjs';
+import { GetServerSideProps } from 'next';
+import { unstable_getServerSession as getServerSession } from 'next-auth';
+import Head from 'next/head';
+import { authOptions } from '../api/auth/[...nextauth]';
+import AppContainer from '../../src/Layout/AppContainer/AppContainer';
+import { AppDispatch, RootState } from '../../config/configureStore';
 import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '../../../../config/configureStore';
-import { guardarSolicitud } from '../../../../slices/solicitud.slice';
+import { useEffect, useState } from 'react';
+import { setMainSectionLoading } from '../../slices/layout.slice';
+import Loading from '../../src/Components/Loading/Loading';
+import { Button, Form, Space, Result, Steps } from 'antd';
+import { setEditContacto } from '../../slices/contacto.slice';
+import { Dayjs } from 'dayjs';
+import { useRouter } from 'next/router';
+import { planesGet } from '../api/planes';
+import { IDependientes, IPlan, ISolicitud } from '../../src/models/interfaces.model';
+import Contratante from '../../src/Components/Contratante/Contratante';
+import Dependientes from '../../src/Components/Dependientes/Dependientes';
+import Review from '../../src/Components/Solicitudes/Individual/Review';
+import { editarSolicitud } from '../../slices/solicitud.slice';
 
 const steps = [
   {
@@ -23,10 +33,77 @@ const steps = [
 
 interface Props {
   planes: IPlan[];
-  plan: string;
+}
+/**
+ * Solicitudes module
+ * @return {JSX.Element} Solicitudes module JSX
+ */
+function SolicitudesEditar({ planes }: Props): JSX.Element {
+  // State management
+  const { isMainSectionLoading } = useSelector((state: RootState) => state.layout);
+  const { editSolicitud } = useSelector((state: RootState) => state.solicitud);
+  const dispatch = useDispatch<AppDispatch>();
+
+  const router = useRouter();
+
+  const handleClear = () => {
+    router.push('/contactos/ver');
+  };
+  // End Form management
+
+  useEffect(() => {
+    console.log(planes);
+    dispatch(setMainSectionLoading(false));
+    return () => {
+      setEditContacto(null);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  if (isMainSectionLoading) {
+    return <Loading />;
+  }
+  // if (!editSolicitud) {
+  //   return (
+  //     <Result
+  //       status="500"
+  //       title="Ups!"
+  //       subTitle="Lo sentimos, al parecer no ha elegido un contacto para editar."
+  //       extra={
+  //         <Button
+  //           type="primary"
+  //           onClick={() => {
+  //             router.push('/contactos/ver');
+  //           }}
+  //         >
+  //           Volver
+  //         </Button>
+  //       }
+  //     />
+  //   );
+  // }
+
+  return (
+    <>
+      <Head>
+        <title>Plan Ocaso | Editar Solicitud Individual/Familiar </title>
+      </Head>
+      <h3 style={{ textAlign: 'center', padding: '20px' }}>Edición de Solicitud</h3>
+      <section id="crear-solicitud" style={{ padding: '10px 0px 0px 10px' }}>
+        <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
+          <IndividualSol planes={planes} plan={'PLAN INDIVIDUAL/FAMILIAR'} />
+        </Space>
+      </section>
+    </>
+  );
 }
 
-const Individual: React.FC<Props> = ({ planes, plan }) => {
+interface IndividualProps {
+  planes: IPlan[];
+  plan: string;
+}
+// eslint-disable-next-line require-jsdoc
+function IndividualSol({ planes, plan }: IndividualProps) {
   const [formContratante] = Form.useForm();
   const [formDependientes] = Form.useForm();
   const [current, setCurrent] = useState<number>(0);
@@ -106,7 +183,7 @@ const Individual: React.FC<Props> = ({ planes, plan }) => {
                         .diff(formContratante.getFieldValue('desde') as Dayjs, 'years', true)
                         .toFixed(1),
                     };
-                    dispatch(guardarSolicitud({ solicitud, formContratante, formDependientes, setCurrent }));
+                    dispatch(editarSolicitud({ solicitud, formContratante, formDependientes, setCurrent }));
                   }}
                 >
                   Finalizar
@@ -124,6 +201,26 @@ const Individual: React.FC<Props> = ({ planes, plan }) => {
       <div className="col-12"></div>
     </div>
   );
+}
+
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  const session = await getServerSession(req, res, authOptions);
+  const { response, data, error } = await planesGet(req, res, session);
+
+  if (!session || !response?.ok || error) {
+    return {
+      redirect: {
+        destination: '/auth/signin',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: { planes: JSON.parse(JSON.stringify(data)) },
+  };
 };
 
-export default Individual;
+SolicitudesEditar.layout = AppContainer;
+
+export default SolicitudesEditar;

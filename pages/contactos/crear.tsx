@@ -29,6 +29,7 @@ function ContactosCrear({}: Props): JSX.Element {
   // State management
   const { isMainSectionLoading } = useSelector((state: RootState) => state.layout);
   const { contacto } = useSelector((state: RootState) => state.contacto);
+
   const [empresaChecked, setEmpresaChecked] = useState<boolean>(contacto.empresa ?? false);
   const [, setVendedorChecked] = useState<boolean>(contacto.vendedor ?? false);
   const [tipoContacto, setTipoContacto] = useState<TipoContacto>(
@@ -64,7 +65,6 @@ function ContactosCrear({}: Props): JSX.Element {
     setVendedorChecked(false);
     setTipoContacto('CLIENTE');
   };
-
   // End Form management
 
   useEffect(() => {
